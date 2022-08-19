@@ -19,6 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    newCustomer: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    manualCustomer: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     address: {
       type: DataTypes.TEXT,
 

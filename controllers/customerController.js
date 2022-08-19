@@ -6,6 +6,7 @@ const {
   permissionUser,
 } = require("../utils/getPermission");
 var IO = require("../app");
+const { Op } = require("sequelize");
 const Customers = db.customers;
 
 const newCustomer = async (userId, type) => {
@@ -88,8 +89,9 @@ const getAllCustomer = async (req, res) => {
     isBranch.length > 0 && { id_branch: isBranch },
     isCustomer.length > 0 && { id: isCustomer },
     isUser.length > 0 && { id_user: isUser },
+    { name: { [Op.not]: "New Customer" } },
   ];
-  let finalWhere = [];
+  let finalWhere = [{ name: { [Op.not]: "New Customer" } }];
   if (
     isBranch.length > 0 ||
     isCG.length > 0 ||
@@ -135,8 +137,11 @@ const getByBranch = async (req, res) => {
     isBranch.length > 0 && { id_branch: isBranch },
     isCustomer.length > 0 && { id: isCustomer },
     isUser.length > 0 && { id_user: isUser },
+    { name: { [Op.not]: "New Customer" } },
   ];
-  let finalWhere = [{ id_branch: id_branch }];
+  let finalWhere = [
+    { id_branch: id_branch, name: { [Op.not]: "New Customer" } },
+  ];
   if (
     isBranch.length > 0 ||
     isCG.length > 0 ||
@@ -184,6 +189,7 @@ const getOneCustomer = async (req, res) => {
       isBranch.length > 0 && { id_branch: isBranch },
       isCustomer.length > 0 && { id: isCustomer },
       isUser.length > 0 && { id_user: isUser },
+      { name: { [Op.not]: "New Customer" } },
     ],
     include: [
       {
@@ -226,6 +232,7 @@ const updateCustomer = async (req, res) => {
       isBranch.length > 0 && { id_branch: isBranch },
       isCustomer.length > 0 && { id: isCustomer },
       isUser.length > 0 && { id_user: isUser },
+      { name: { [Op.not]: "New Customer" } },
     ],
   });
   if (customer > 0) {
@@ -257,6 +264,7 @@ const deleteCustomer = async (req, res) => {
         isBranch.length > 0 && { id_branch: isBranch },
         isCustomer.length > 0 && { id: isCustomer },
         isUser.length > 0 && { id_user: isUser },
+        { name: { [Op.not]: "New Customer" } },
       ],
     });
     if (hapus > 0) {
