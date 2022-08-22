@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     callType: {
+      defaultValue: "in",
       type: DataTypes.ENUM("in", "out"),
     },
     priceNote: {

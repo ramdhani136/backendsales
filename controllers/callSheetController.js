@@ -139,6 +139,8 @@ const create = async (req, res) => {
     id_branch: req.body.id_branch,
     callType: req.body.callType,
     status: req.body.status,
+    newCustomer: req.body.newCustomer,
+    manualCustomer: req.body.manualCustomer,
   };
   try {
     let visits = await CallSheet.create(data);
