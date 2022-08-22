@@ -10,6 +10,52 @@ const { paddy } = require("../utils/paddy");
 const { Op } = require("sequelize");
 const CallSheet = db.callsheets;
 
+const newCallSheetById = async (id, userId, type) => {
+  const isBranch = await permissionBranch(userId, type);
+  const isCG = await permissionCG(userId, type);
+  const isCustomer = await permissionCustomer(userId, type);
+  const isUser = await permissionUser(userId, type);
+  const isWhere = [
+    { id: id },
+    isBranch.length > 0 && { id_branch: isBranch },
+    isCustomer.length > 0 && { id_customer: isCustomer },
+    isUser.length > 0 && { id_user: isUser },
+  ];
+  let finalWhere = [{ id: id }];
+  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+    finalWhere = isWhere;
+  }
+  return await CallSheet.findAll({
+    where: finalWhere,
+    include: [
+      {
+        model: db.users,
+        as: "user",
+        attributes: ["id", "name", "username", "email", "phone"],
+      },
+      {
+        model: db.branch,
+        as: "branch",
+        attributes: ["id", "name"],
+      },
+      {
+        model: db.customers,
+        as: "customer",
+        attributes: ["id", "name", "type", "status"],
+        where: isCG.length > 0 && { id_customerGroup: isCG },
+        include: [
+          {
+            model: db.customergroup,
+            as: "customergroup",
+            attributes: ["id", "name", "deskripsi", "status"],
+          },
+        ],
+      },
+    ],
+    order: [["id", "DESC"]],
+  });
+};
+
 const newCallSheet = async (userId, type) => {
   const isBranch = await permissionBranch(userId, type);
   const isCG = await permissionCG(userId, type);
@@ -95,12 +141,15 @@ const create = async (req, res) => {
     status: req.body.status,
   };
   try {
-    await CallSheet.create(data);
-    IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+    let visits = await CallSheet.create(data);
+    IO.setEmit(
+      "callsheets",
+      await newCallSheetById(visits.id, req.userId, "callsheet")
+    );
     res.status(200).json({
       status: true,
       message: "successfully save data",
-      data: await newCallSheet(req.userId, "callsheet"),
+      data: await newCallSheetById(visits.id, req.userId, "callsheet"),
     });
   } catch (error) {
     res.status(400).json({ status: false, message: error });
@@ -262,11 +311,14 @@ const updateCallSheet = async (req, res) => {
       await CallSheet.update(req.body, {
         where: { id: id },
       });
-      IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+      IO.setEmit(
+        "callsheets",
+        await newCallSheetById(id, req.userId, "callsheet")
+      );
       res.status(200).json({
         status: true,
         message: "successfully update data",
-        data: await newCallSheet(req.userId, "callsheet"),
+        data: await newCallSheetById(id, req.userId, "callsheet"),
       });
     } catch (error) {
       res.status(400).json({

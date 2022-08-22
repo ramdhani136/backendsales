@@ -398,7 +398,7 @@ const updateVisit = async (req, res) => {
                 console.log(info);
               }
             });
-          IO.setEmit("visits", await newVisit(req.userId, "visit"));
+          IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
           res.status(200).json({
             status: true,
             message: "successfully save data",
@@ -411,7 +411,7 @@ const updateVisit = async (req, res) => {
             .json({ status: false, message: `${error.table} is required` });
         }
       } else {
-        IO.setEmit("visits", await newVisit(req.userId, "visit"));
+        IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
         res.status(200).json({
           status: true,
           message: "successfully update data",
