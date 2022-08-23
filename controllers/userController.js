@@ -174,7 +174,7 @@ const login = async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       {
         // expiresIn: "20s",
-        expiresIn: "3600s",
+        expiresIn: "324000s",
       }
     );
 
@@ -269,7 +269,7 @@ const refreshToken = async (req, res) => {
           process.env.ACCESS_TOKEN_SECRET,
           {
             // expiresIn: "20s",
-            expiresIn: "3600s",
+            expiresIn: "324000s",
           }
         );
 
