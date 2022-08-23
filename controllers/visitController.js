@@ -10,6 +10,8 @@ const {
 const { Op } = require("sequelize");
 const { paddy } = require("../utils/paddy");
 var IO = require("../app");
+const fs = require("fs");
+const cekData = require("../utils/cenData");
 
 const Visits = db.visits;
 
@@ -451,6 +453,30 @@ const deleteVisit = async (req, res) => {
       await db.visits.destroy({
         where: { id: id },
       });
+      if (
+        await cekData(
+          fs.existsSync(
+            path.join(__dirname, "../public/images/" + isResult[0].img)
+          )
+        )
+      ) {
+        await fs.unlink(
+          path.join(__dirname, "../public/images/" + isResult[0].img),
+          function (err) {
+            if (err && err.code == "ENOENT") {
+              // file doens't exist
+              console.log(err);
+            } else if (err) {
+              // other errors, e.g. maybe we don't have enough permission
+              console.log("Error occurred while trying to remove file");
+            } else {
+              console.log(`removed`);
+            }
+          }
+        );
+      } else {
+        console.log("file tidak ditemukan");
+      }
       IO.setEmit("visits", await newVisit(req.userId, "visit"));
       res.status(200).json({
         status: true,
