@@ -31,6 +31,7 @@ const corsOptions = {
 };
 
 app.use("/public", express.static(path.join(__dirname, "public/images")));
+app.use("/images/users", express.static(path.join(__dirname, "public/users")));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());

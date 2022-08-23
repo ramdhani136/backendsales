@@ -42,7 +42,16 @@ const newUsers = async (userId, type) => {
         ],
       },
     ],
-    attributes: ["id", "name", "username", "email", "phone", "img", "status"],
+    attributes: [
+      "id",
+      "name",
+      "username",
+      "email",
+      "phone",
+      "img",
+      "erpToken",
+      "status",
+    ],
   });
 };
 
@@ -84,7 +93,16 @@ const getUsers = async (req, res) => {
           ],
         },
       ],
-      attributes: ["id", "name", "username", "email", "phone", "img", "status"],
+      attributes: [
+        "id",
+        "name",
+        "username",
+        "email",
+        "phone",
+        "img",
+        "erpToken",
+        "status",
+      ],
     });
     IO.setEmit("users", await newUsers(req.userId, "user"));
     res.json({ users });
@@ -156,7 +174,16 @@ const login = async (req, res) => {
           ],
         },
       ],
-      attribute: ["id", "name", "username", "email", "phone", "img", "status"],
+      attribute: [
+        "id",
+        "name",
+        "username",
+        "email",
+        "phone",
+        "img",
+        "erpToken",
+        "status",
+      ],
     });
     const match = await bcrypt.compare(req.body.password, user[0].password);
     if (!match)
@@ -168,9 +195,10 @@ const login = async (req, res) => {
     const phone = user[0].phone;
     const img = user[0].img;
     const role = user[0].dataValues.role;
+    const erpToken = user[0].erpToken;
 
     const accessToken = jwt.sign(
-      { userId, name, username, email, phone, img, role },
+      { userId, name, username, email, phone, img, role, erpToken },
       process.env.ACCESS_TOKEN_SECRET,
       {
         // expiresIn: "20s",
@@ -179,10 +207,10 @@ const login = async (req, res) => {
     );
 
     const refreshToken = jwt.sign(
-      { userId, name, username, email, phone, img, role },
+      { userId, name, username, email, phone, img, role, erpToken },
       process.env.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: "1d",
+        expiresIn: "90d",
       }
     );
     await Users.update(
@@ -239,7 +267,16 @@ const refreshToken = async (req, res) => {
           ],
         },
       ],
-      attribute: ["id", "name", "username", "email", "phone", "img", "status"],
+      attribute: [
+        "id",
+        "name",
+        "username",
+        "email",
+        "phone",
+        "img",
+        "erpToken",
+        "status",
+      ],
     });
 
     if (!user[0]) return res.sendStatus(403);
@@ -255,7 +292,7 @@ const refreshToken = async (req, res) => {
         const phone = user[0].phone;
         const img = user[0].img;
         const role = user[0].dataValues.role;
-
+        const erpToken = user[0].erpToken;
         const accessToken = jwt.sign(
           {
             userId,
@@ -265,6 +302,7 @@ const refreshToken = async (req, res) => {
             phone,
             img,
             role,
+            erpToken,
           },
           process.env.ACCESS_TOKEN_SECRET,
           {

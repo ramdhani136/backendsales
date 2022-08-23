@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    erpToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     status: { type: DataTypes.BOOLEAN, defaultValue: 1 },
   });
 
