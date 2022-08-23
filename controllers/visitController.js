@@ -158,11 +158,16 @@ const create = async (req, res) => {
         isName + ".jpg"
       );
       await sharp(req.file.path)
-        .resize(640, 480)
+        .resize(640, 480, {
+          fit: sharp.fit.inside,
+          withoutEnlargement: true,
+        })
         .jpeg({
           quality: 100,
+          progressive: true,
           chromaSubsampling: "4:4:4",
         })
+        .withMetadata()
         .toFile(compressedImage, (err, info) => {
           if (err) {
             console.log(err);
@@ -386,11 +391,16 @@ const updateVisit = async (req, res) => {
             isResult[0].img
           );
           await sharp(req.file.path)
-            .resize(640, 480)
+            .resize(640, 480, {
+              fit: sharp.fit.inside,
+              withoutEnlargement: true,
+            })
             .jpeg({
               quality: 100,
+              progressive: true,
               chromaSubsampling: "4:4:4",
             })
+            .withMetadata()
             .toFile(compressedImage, (err, info) => {
               if (err) {
                 console.log(err);
