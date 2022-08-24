@@ -449,13 +449,14 @@ const updateData = async (req, res) => {
       await db.users.update(req.body, {
         where: { id: id },
       });
-
       if (req.file != undefined) {
+        let istitik = req.file.originalname.indexOf(".");
+        let typeimage = req.file.originalname.slice(istitik, 200);
         try {
           const compressedImage = await path.join(
             __dirname,
             "../public/users",
-            `${result[0].name}.jpg`
+            `${result[0].name}${typeimage}`
           );
           await sharp(req.file.path)
             .resize(640, 480, {
@@ -475,9 +476,8 @@ const updateData = async (req, res) => {
                 console.log(info);
               }
             });
-
           await db.users.update(
-            { img: `${result[0].name}.jpg` },
+            { img: `${result[0].name}${typeimage}` },
             {
               where: { id: id },
             }
