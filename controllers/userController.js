@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const { permissionUser } = require("../utils/getPermission");
 var IO = require("../app");
 const Users = db.users;
+const sharp = require("sharp");
+const path = require("path");
 
 const newUsers = async (userId, type) => {
   const isUser = await permissionUser(userId, type);
@@ -55,11 +57,118 @@ const newUsers = async (userId, type) => {
   });
 };
 
+const newUsersById = async (id, userId, type) => {
+  const isUser = await permissionUser(userId, type);
+  return await Users.findAll({
+    where: isUser.length > 0 && [{ id: isUser }, { id: id }],
+    include: [
+      {
+        model: db.roleusers,
+        as: "role",
+        attributes: ["id", "id_roleprofile", "status"],
+        include: [
+          {
+            model: db.roleprofiles,
+            as: "roleprofile",
+            attributes: ["id", "name", "status"],
+            include: [
+              {
+                model: db.rolelists,
+                as: "rolelist",
+                attributes: [
+                  "id",
+                  "doc",
+                  "create",
+                  "read",
+                  "update",
+                  "delete",
+                  "amend",
+                  "submit",
+                  "report",
+                  "export",
+                  "status",
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    attributes: [
+      "id",
+      "name",
+      "username",
+      "email",
+      "phone",
+      "img",
+      "erpToken",
+      "status",
+    ],
+  });
+};
+
 const getUsers = async (req, res) => {
   const isUser = await permissionUser(req.userId, "user");
   try {
     const users = await Users.findAll({
       where: isUser.length > 0 && { id: isUser },
+      include: [
+        {
+          model: db.roleusers,
+          as: "role",
+          attributes: ["id", "id_roleprofile", "status"],
+          include: [
+            {
+              model: db.roleprofiles,
+              as: "roleprofile",
+              attributes: ["id", "name", "status"],
+              include: [
+                {
+                  model: db.rolelists,
+                  as: "rolelist",
+                  attributes: [
+                    "id",
+                    "doc",
+                    "create",
+                    "read",
+                    "update",
+                    "delete",
+                    "amend",
+                    "submit",
+                    "report",
+                    "export",
+                    "status",
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        "id",
+        "name",
+        "username",
+        "email",
+        "phone",
+        "img",
+        "erpToken",
+        "status",
+      ],
+    });
+    IO.setEmit("users", await newUsers(req.userId, "user"));
+    res.json({ users });
+  } catch (err) {
+    res.json(err);
+  }
+};
+
+const getUsersById = async (req, res) => {
+  let id = req.params.id;
+  const isUser = await permissionUser(req.userId, "user");
+  try {
+    const users = await Users.findAll({
+      where: [isUser.length > 0 && { id: isUser }, { id: id }],
       include: [
         {
           model: db.roleusers,
@@ -332,10 +441,77 @@ const logout = async (req, res) => {
   return res.sendStatus(200);
 };
 
+const updateData = async (req, res) => {
+  let id = req.params.id;
+  let result = await newUsersById(id, req.userId, "user");
+  if (result.length > 0) {
+    try {
+      await db.users.update(req.body, {
+        where: { id: id },
+      });
+
+      if (req.file != undefined) {
+        try {
+          const compressedImage = await path.join(
+            __dirname,
+            "../public/users",
+            `${result[0].name}.jpg`
+          );
+          await sharp(req.file.path)
+            .resize(640, 480, {
+              fit: sharp.fit.inside,
+              withoutEnlargement: true,
+            })
+            .jpeg({
+              quality: 100,
+              progressive: true,
+              chromaSubsampling: "4:4:4",
+            })
+            .withMetadata()
+            .toFile(compressedImage, (err, info) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log(info);
+              }
+            });
+
+          await db.users.update(
+            { img: `${result[0].name}.jpg` },
+            {
+              where: { id: id },
+            }
+          );
+          res.status(200).json({
+            status: true,
+            message: "successfully save data",
+            data: await newUsersById(id, req.userId, "user"),
+          });
+        } catch (error) {
+          console.log(error);
+          res.status(400).json({ status: false, message: error });
+        }
+      } else {
+        res.status(200).json({
+          status: true,
+          msg: "Success",
+          data: await newUsersById(id, req.userId, "user"),
+        });
+      }
+    } catch (err) {
+      res.status(404).json({ status: false, msg: "Error!" });
+    }
+  } else {
+    res.status(404).json({ status: false, msg: "User not found" });
+  }
+};
+
 module.exports = {
   getUsers,
   register,
   login,
   refreshToken,
   logout,
+  getUsersById,
+  updateData,
 };
