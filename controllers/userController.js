@@ -443,6 +443,12 @@ const logout = async (req, res) => {
 
 const updateData = async (req, res) => {
   let id = req.params.id;
+  if (req.body.password) {
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
+    req.body.password = await hashPassword;
+  }
+
   let result = await newUsersById(id, req.userId, "user");
   if (result.length > 0) {
     try {
