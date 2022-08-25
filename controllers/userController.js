@@ -60,7 +60,7 @@ const newUsers = async (userId, type) => {
 const newUsersById = async (id, userId, type) => {
   const isUser = await permissionUser(userId, type);
   return await Users.findAll({
-    where: isUser.length > 0 && [{ id: isUser }, { id: id }],
+    where: [isUser.length > 0 && { id: isUser }, { id: id }],
     include: [
       {
         model: db.roleusers,
@@ -457,6 +457,7 @@ const updateData = async (req, res) => {
       });
       if (req.file != undefined) {
         let istitik = req.file.originalname.indexOf(".");
+
         let typeimage = req.file.originalname.slice(istitik, 200);
         try {
           const compressedImage = await path.join(
