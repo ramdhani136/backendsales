@@ -76,7 +76,7 @@ const newVisit = async (userId, type) => {
     finalWhere = isWhere;
   }
   return await Visits.findAll({
-    where: finalWhere,
+    // where: finalWhere,
     include: [
       {
         model: db.users,
@@ -92,7 +92,7 @@ const newVisit = async (userId, type) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        // where: isCG.length > 0 && { id_customerGroup: isCG },
         include: [
           {
             model: db.customergroup,
@@ -321,7 +321,7 @@ const getByStatus = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  IO.setEmit("visits", await newVisit(req.userId, "visit"));
+  // IO.setEmit("visits", await newVisit(req.userId, "visit"));
   res.send(visits);
 };
 
@@ -410,7 +410,7 @@ const updateVisit = async (req, res) => {
                 console.log(info);
               }
             });
-          IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
+          IO.setEmit("visits", await newVisit(req.userId, "visit"));
           res.status(200).json({
             status: true,
             message: "successfully save data",
@@ -423,7 +423,7 @@ const updateVisit = async (req, res) => {
             .json({ status: false, message: `${error.table} is required` });
         }
       } else {
-        IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
+        IO.setEmit("visits", await newVisit(req.userId, "visit"));
         res.status(200).json({
           status: true,
           message: "successfully update data",

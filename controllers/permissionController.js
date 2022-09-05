@@ -56,8 +56,8 @@ const getAllData = async (req, res) => {
 
 const getOneData = async (req, res) => {
   let id = req.params.id;
-  let data = await IsData.findOne({
-    where: { id: id },
+  let data = await IsData.findAll({
+    where: { id_user: id },
     include: [
       { model: db.users, as: "user", attributes: ["id", "name"] },
       { model: db.users, as: "created", attributes: ["id", "name"] },

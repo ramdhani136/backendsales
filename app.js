@@ -42,6 +42,13 @@ const setEmit = (name, msg) => {
   io.emit(name, msg);
 };
 
+io.on("connection", (socket) => {
+  console.log("Connected Successfully", socket.id);
+  socket.on("disconnect", () => {
+    console.log("disocnnnect ", socket.id);
+  });
+});
+
 module.exports.setEmit = setEmit;
 
 const port = process.env.PORT || 5000;
