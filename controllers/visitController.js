@@ -272,7 +272,7 @@ const getAllVisit = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  IO.setEmit("visits", await newVisit(req.userId, "visit"));
+  // IO.setEmit("visits", await newVisit(req.userId, "visit"));
   res.send(visits);
 };
 
