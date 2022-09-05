@@ -71,7 +71,7 @@ const newCallSheet = async (userId, type) => {
     finalWhere = isWhere;
   }
   return await CallSheet.findAll({
-    where: finalWhere,
+    // where: finalWhere,
     include: [
       {
         model: db.users,
@@ -87,7 +87,7 @@ const newCallSheet = async (userId, type) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "status"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        // where: isCG.length > 0 && { id_customerGroup: isCG },
         include: [
           {
             model: db.customergroup,
@@ -144,10 +144,7 @@ const create = async (req, res) => {
   };
   try {
     let visits = await CallSheet.create(data);
-    IO.setEmit(
-      "callsheets",
-      await newCallSheetById(visits.id, req.userId, "callsheet")
-    );
+    IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
     res.status(200).json({
       status: true,
       message: "successfully save data",
@@ -250,7 +247,7 @@ const getByStatus = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+  // IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
   res.send(callsheets);
 };
 
@@ -313,10 +310,7 @@ const updateCallSheet = async (req, res) => {
       await CallSheet.update(req.body, {
         where: { id: id },
       });
-      IO.setEmit(
-        "callsheets",
-        await newCallSheetById(id, req.userId, "callsheet")
-      );
+      IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
       res.status(200).json({
         status: true,
         message: "successfully update data",
