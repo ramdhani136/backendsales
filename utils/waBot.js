@@ -97,7 +97,7 @@ const createSessionWA = async (id) => {
               if (phoneNumberFormatter(data.dataValues.phone) === fromUser) {
                 if (msg.substring(1, 4) == "VST") {
                   await db.visits.update(
-                    { rating: rating },
+                    { rating: rating, isSurvey: "3" },
                     { where: { name: nomorDoc } }
                   );
                 } else {

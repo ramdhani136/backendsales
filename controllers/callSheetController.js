@@ -143,12 +143,12 @@ const create = async (req, res) => {
     manualCustomer: req.body.manualCustomer,
   };
   try {
-    let visits = await CallSheet.create(data);
+    let callsheet = await CallSheet.create(data);
     IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
     res.status(200).json({
       status: true,
       message: "successfully save data",
-      data: await newCallSheetById(visits.id, req.userId, "callsheet"),
+      data: await newCallSheetById(callsheet.id, req.userId, "callsheet"),
     });
   } catch (error) {
     res.status(400).json({ status: false, message: error });
@@ -311,6 +311,50 @@ const updateCallSheet = async (req, res) => {
         where: { id: id },
       });
       IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+      if (
+        isResult[0].isSurvey === "0" &&
+        isResult[0].status === "0" &&
+        req.body.status === "1"
+      ) {
+        var myModul = await require("../utils/waBot");
+
+        const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
+Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+yang sudah dilakukan oleh tim sales kami.
+dari skala (tidak baik) 1-5 (sangat baik)
+
+dengan format penilaian sebagai berikut :
+#nomorcase_skala nilai (#VST0012022090001_5)`;
+
+        const send = await myModul.kirimpesan(
+          isResult[0].phone,
+          // isResult[0].name
+          message
+        );
+        await myModul.kirimpesan(
+          isResult[0].phone,
+          "👇👇copy dan lanjutkan dari number case dibawah ini 👇👇"
+        );
+        await myModul.kirimpesan(
+          isResult[0].phone,
+          `#${isResult[0].name}_gantidenganratinganda`
+        );
+        if (send) {
+          await db.callsheets.update(
+            { isSurvey: "1" },
+            {
+              where: { id: id },
+            }
+          );
+        } else {
+          await db.callsheets.update(
+            { isSurvey: "2" },
+            {
+              where: { id: id },
+            }
+          );
+        }
+      }
       res.status(200).json({
         status: true,
         message: "successfully update data",
