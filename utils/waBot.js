@@ -63,14 +63,45 @@ const createSessionWA = async (id) => {
     client.initialize();
   });
 
-  client.on("message", (message) => {
-    if (message.body === "!ping") {
-      message.reply("pong");
+  client.on("message", async (message) => {
+    const msg = await message.body;
+    const fromUser = await message.from;
+    const data = await db.visits.findOne({
+      where: {
+        name: msg,
+      },
+    });
+    if (data === null) {
+      client.sendMessage(
+        phoneNumberFormatter(fromUser),
+        "Data tidak di temukan, Silahkan cek kembali :)"
+      );
+    } else {
+      if (phoneNumberFormatter(data.dataValues.phone) === fromUser) {
+        client.sendMessage(
+          phoneNumberFormatter(fromUser),
+          "Terima kasih sudah melakukan rating :)"
+        );
+      } else {
+        client.sendMessage(
+          phoneNumberFormatter(fromUser),
+          "Error, Tidak mempunyai akses :)"
+        );
+      }
     }
   });
 
-  var kirimpesan = (kontak, msg) => {
-    client.sendMessage(phoneNumberFormatter(kontak), msg);
+  var kirimpesan = async (kontak, msg) => {
+    const registered = await client.isRegisteredUser(
+      phoneNumberFormatter(kontak)
+    );
+    if (registered) {
+      await client.sendMessage(phoneNumberFormatter(kontak), msg);
+      return true;
+    } else {
+      console.log("nomor tidak terdaftar");
+      return false;
+    }
   };
 
   module.exports.kirimpesan = kirimpesan;

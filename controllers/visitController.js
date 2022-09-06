@@ -424,6 +424,50 @@ const updateVisit = async (req, res) => {
         }
       } else {
         IO.setEmit("visits", await newVisit(req.userId, "visit"));
+        if (
+          isResult[0].isSurvey === "0" &&
+          isResult[0].status === "0" &&
+          req.body.status === "1"
+        ) {
+          var myModul = await require("../utils/waBot");
+
+          const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
+Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+yang sudah dilakukan oleh tim sales kami.
+dari skala (tidak baik) 1-5 (sangat baik)
+
+dengan format penilaian sebagai berikut :
+#nomorcase_skala nilai (#VST0012022090001_5)`;
+
+          const send = await myModul.kirimpesan(
+            isResult[0].phone,
+            // isResult[0].name
+            message
+          );
+          await myModul.kirimpesan(
+            isResult[0].phone,
+            "👇👇copy dan lanjutkan dari number case dibawah ini 👇👇"
+          );
+          await myModul.kirimpesan(
+            isResult[0].phone,
+            `#${isResult[0].name}_gantidenganratinganda`
+          );
+          if (send) {
+            await db.visits.update(
+              { isSurvey: "1" },
+              {
+                where: { id: id },
+              }
+            );
+          } else {
+            await db.visits.update(
+              { isSurvey: "2" },
+              {
+                where: { id: id },
+              }
+            );
+          }
+        }
         res.status(200).json({
           status: true,
           message: "successfully update data",
@@ -498,8 +542,9 @@ const deleteVisit = async (req, res) => {
 };
 
 const message = async (req, res) => {
-  var myModul = require("../utils/waBot");
-  myModul.kirimpesan(req.body.number, req.body.message);
+  var myModul = await require("../utils/waBot");
+  const send = await myModul.kirimpesan(req.body.number, req.body.message);
+  console.log(send);
   res.send(req.body);
 };
 

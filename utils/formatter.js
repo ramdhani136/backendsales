@@ -10,6 +10,10 @@ const phoneNumberFormatter = (number) => {
     formatted += "@c.us";
   }
 
+  if (!formatted.startsWith("62")) {
+    formatted = "62" + formatted;
+  }
+
   return formatted;
 };
 

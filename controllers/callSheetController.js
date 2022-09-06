@@ -198,7 +198,7 @@ const getAllCallSheet = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+  // IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
   res.send(callsheets);
 };
 
