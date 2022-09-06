@@ -66,26 +66,74 @@ const createSessionWA = async (id) => {
   client.on("message", async (message) => {
     const msg = await message.body;
     const fromUser = await message.from;
-    const data = await db.visits.findOne({
-      where: {
-        name: msg,
-      },
-    });
-    if (data === null) {
-      client.sendMessage(
-        phoneNumberFormatter(fromUser),
-        "Data tidak di temukan, Silahkan cek kembali :)"
-      );
-    } else {
-      if (phoneNumberFormatter(data.dataValues.phone) === fromUser) {
-        client.sendMessage(
-          phoneNumberFormatter(fromUser),
-          "Terima kasih sudah melakukan rating :)"
-        );
+
+    if (msg.substring(0, 1) === "#") {
+      const sliceKata = msg.split("#");
+      if (sliceKata[1] !== "" && msg.indexOf("_") >= 0) {
+        var nomorDoc = msg.substring(1, msg.indexOf("_"));
+        var rating = parseInt(msg.split("_")[1]);
+
+        if (msg.split("_")[1] !== "") {
+          if (rating !== NaN && rating <= 5 && rating >= 1) {
+            if (msg.substring(1, 4) == "VST") {
+              var data = await db.visits.findOne({
+                where: {
+                  name: nomorDoc,
+                },
+              });
+            } else {
+              var data = await db.callsheets.findOne({
+                where: {
+                  name: nomorDoc,
+                },
+              });
+            }
+            if (data === null) {
+              client.sendMessage(
+                phoneNumberFormatter(fromUser),
+                "Data tidak di temukan, Silahkan cek kembali :)"
+              );
+            } else {
+              if (phoneNumberFormatter(data.dataValues.phone) === fromUser) {
+                if (msg.substring(1, 4) == "VST") {
+                  await db.visits.update(
+                    { rating: rating },
+                    { where: { name: nomorDoc } }
+                  );
+                } else {
+                  await db.callsheets.update(
+                    { rating: rating },
+                    { where: { name: nomorDoc } }
+                  );
+                }
+
+                client.sendMessage(
+                  phoneNumberFormatter(fromUser),
+                  "Terima kasih sudah melakukan rating :)"
+                );
+              } else {
+                client.sendMessage(
+                  phoneNumberFormatter(fromUser),
+                  "Error, Tidak mempunyai akses :)"
+                );
+              }
+            }
+          } else {
+            client.sendMessage(
+              phoneNumberFormatter(fromUser),
+              "Gagal, silahkan isi rating dengan nilai 1-5 :)"
+            );
+          }
+        } else {
+          client.sendMessage(
+            phoneNumberFormatter(fromUser),
+            "Gagal, mohon cek kembali untuk format penginputannya  :)"
+          );
+        }
       } else {
         client.sendMessage(
           phoneNumberFormatter(fromUser),
-          "Error, Tidak mempunyai akses :)"
+          "Gagal, mohon cek kembali untuk format penginputannya  :)"
         );
       }
     }
