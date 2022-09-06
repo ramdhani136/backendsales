@@ -102,7 +102,7 @@ const createSessionWA = async (id) => {
                   );
                 } else {
                   await db.callsheets.update(
-                    { rating: rating },
+                    { rating: rating, isSurvey: "3" },
                     { where: { name: nomorDoc } }
                   );
                 }
