@@ -22,8 +22,10 @@ const newVisitById = async (id, userId, type) => {
   const isUser = await permissionUser(userId, type);
   const isWhere = [
     { id: id },
-    isBranch.length > 0 && { id_branch: isBranch },
-    isCustomer.length > 0 && { id_customer: isCustomer },
+    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+    isCustomer.length > 0 && {
+      id_customer: { [Op.or]: [isCustomer, 1000000] },
+    },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [{ id: id }];
@@ -47,7 +49,9 @@ const newVisitById = async (id, userId, type) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
         include: [
           {
             model: db.customergroup,
@@ -67,8 +71,10 @@ const newVisit = async (userId, type) => {
   const isCustomer = await permissionCustomer(userId, type);
   const isUser = await permissionUser(userId, type);
   const isWhere = [
-    isBranch.length > 0 && { id_branch: isBranch },
-    isCustomer.length > 0 && { id_customer: isCustomer },
+    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+    isCustomer.length > 0 && {
+      id_customer: { [Op.or]: [isCustomer, 1000000] },
+    },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [];
@@ -92,7 +98,9 @@ const newVisit = async (userId, type) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type"],
-        // where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
         include: [
           {
             model: db.customergroup,
@@ -198,7 +206,9 @@ const create = async (req, res) => {
             model: db.customers,
             as: "customer",
             attributes: ["id", "name", "type"],
-            where: isCG.length > 0 && { id_customerGroup: isCG },
+            where: isCG.length > 0 && {
+              id_customergroup: { [Op.or]: [isCG, 1000000] },
+            },
             include: [
               {
                 model: db.customergroup,
@@ -235,8 +245,10 @@ const getAllVisit = async (req, res) => {
   const isCustomer = await permissionCustomer(req.userId, "visit");
   const isUser = await permissionUser(req.userId, "visit");
   const isWhere = [
-    isBranch.length > 0 && { id_branch: isBranch },
-    isCustomer.length > 0 && { id_customer: isCustomer },
+    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+    isCustomer.length > 0 && {
+      id_customer: { [Op.or]: [isCustomer, 1000000] },
+    },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [];
@@ -260,7 +272,9 @@ const getAllVisit = async (req, res) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "id_customerGroup", "status"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
         include: [
           {
             model: db.customergroup,
@@ -284,8 +298,10 @@ const getByStatus = async (req, res) => {
   const isUser = await permissionUser(req.userId, "visit");
   const isWhere = [
     { status: status },
-    isBranch.length > 0 && { id_branch: isBranch },
-    isCustomer.length > 0 && { id_customer: isCustomer },
+    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+    isCustomer.length > 0 && {
+      id_customer: { [Op.or]: [isCustomer, 1000000] },
+    },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [{ status: status }];
@@ -309,7 +325,9 @@ const getByStatus = async (req, res) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "id_customerGroup", "status"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
         include: [
           {
             model: db.customergroup,
@@ -334,8 +352,10 @@ const getOneVisit = async (req, res) => {
   let visits = await Visits.findOne({
     where: [
       { id: id },
-      isBranch.length > 0 && { id_branch: isBranch },
-      isCustomer.length > 0 && { id_customer: isCustomer },
+      isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+      isCustomer.length > 0 && {
+        id_customer: { [Op.or]: [isCustomer, 1000000] },
+      },
       isUser.length > 0 && { id_user: isUser },
     ],
     include: [
@@ -353,7 +373,9 @@ const getOneVisit = async (req, res) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type"],
-        where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
         include: [
           {
             model: db.customergroup,

@@ -1,13 +1,17 @@
 const db = require("../models");
 const { permissionBranch } = require("../utils/getPermission");
 var IO = require("../app");
+const { Op } = require("sequelize");
 
 const Branch = db.branch;
 
 const newBranch = async (userId, type) => {
   const isBranch = await permissionBranch(userId, type);
-  const isWhere = [isBranch.length > 0 && { id: isBranch }];
-  let finalWhere = [];
+  const isWhere = [
+    isBranch.length > 0 && { id: isBranch },
+    { id: { [Op.ne]: 1000000 } },
+  ];
+  let finalWhere = [{ id: { [Op.ne]: 1000000 } }];
   if (isBranch.length > 0) {
     finalWhere = isWhere;
   }
@@ -40,8 +44,11 @@ const create = async (req, res) => {
 
 const getAllBranch = async (req, res) => {
   const isBranch = await permissionBranch(req.userId, "branch");
-  const isWhere = [isBranch.length > 0 && { id: isBranch }];
-  let finalWhere = [];
+  const isWhere = [
+    isBranch.length > 0 && { id: isBranch },
+    { id: { [Op.ne]: 1000000 } },
+  ];
+  let finalWhere = [{ id: { [Op.ne]: 1000000 } }];
   if (isBranch.length > 0) {
     finalWhere = isWhere;
   }
