@@ -7,5 +7,6 @@ router.get("/", cg.getAllCG);
 router.get("/:id", cg.getOneCG);
 router.put("/:id", cg.updateCG);
 router.delete("/:id", cg.deleteCG);
+router.get("/branch/:id", cg.getByBranch);
 
 module.exports = router;

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     type: {
       type: DataTypes.ENUM("Company", "Individual"),
+      defaultValue: "Company",
     },
     id_customerGroup: {
       type: DataTypes.INTEGER,

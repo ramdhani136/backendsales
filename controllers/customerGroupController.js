@@ -1,7 +1,13 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
-const { permissionBranch } = require("../utils/getPermission");
+const {
+  permissionBranch,
+  permissionCG,
+  permissionCustomer,
+  permissionUser,
+} = require("../utils/getPermission");
 var IO = require("../app");
+const { Op } = require("sequelize");
 const CustomerGroup = db.customergroup;
 
 const newCG = async (userId, type) => {
@@ -91,6 +97,35 @@ const updateCG = async (req, res) => {
   }
 };
 
+const getByBranch = async (req, res) => {
+  let id = req.params.id;
+  const isBranch = await permissionBranch(req.userId, "customergroup");
+  const isCG = await permissionCG(req.userId, "customergroup");
+  const isUser = await permissionUser(req.userId, "customergroup");
+  const isWhere = [
+    { id_branch: id },
+    isCG.length > 0 && { id: isCG },
+    isBranch.length > 0 && { id_branch: isBranch },
+
+    isUser.length > 0 && { id_user: isUser },
+  ];
+  let finalWhere = [{ id_branch: id }];
+  if (isBranch.length > 0 || isCG.length > 0 || isUser.length > 0) {
+    finalWhere = isWhere;
+  }
+
+  let cg = await CustomerGroup.findAll({
+    where: isWhere,
+    order: [["id", "DESC"]],
+    include: [
+      { model: db.users, as: "user", attributes: ["id", "name"] },
+      { model: db.branch, as: "branch", attributes: ["id", "name"] },
+    ],
+  });
+  IO.setEmit("customergroup", await newCG(req.userId, "customergroup"));
+  res.send(cg);
+};
+
 const deleteCG = async (req, res) => {
   const isBranch = await permissionBranch(req.userId, "customergroup");
   let id = req.params.id;
@@ -122,4 +157,5 @@ module.exports = {
   getOneCG,
   updateCG,
   deleteCG,
+  getByBranch,
 };
