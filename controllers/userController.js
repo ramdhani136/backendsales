@@ -157,7 +157,7 @@ const getUsers = async (req, res) => {
       ],
     });
     IO.setEmit("users", await newUsers(req.userId, "user"));
-    res.json({ users });
+    res.send(users);
   } catch (err) {
     res.json(err);
   }
