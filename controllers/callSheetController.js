@@ -90,7 +90,7 @@ const newCallSheet = async (userId, type) => {
       {
         model: db.customers,
         as: "customer",
-        attributes: ["id", "name", "type", "status"],
+        attributes: ["id", "name", "type", "id_customerGroup", "status"],
         // where: isCG.length > 0 && { id_customerGroup: isCG },
         include: [
           {
