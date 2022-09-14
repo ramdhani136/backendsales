@@ -97,7 +97,7 @@ const newVisit = async (userId, type) => {
       {
         model: db.customers,
         as: "customer",
-        attributes: ["id", "name", "type"],
+        attributes: ["id", "name", "type", "id_customerGroup", "status"],
         where: isCG.length > 0 && {
           id_customergroup: { [Op.or]: [isCG, 1000000] },
         },
@@ -185,7 +185,6 @@ const create = async (req, res) => {
             console.log(info);
           }
         });
-      IO.setEmit("visits", await newVisit(req.userId, "visit"));
 
       const isCG = await permissionCG(req.userId, "visit");
 
@@ -220,6 +219,7 @@ const create = async (req, res) => {
         ],
         order: [["id", "DESC"]],
       });
+      IO.setEmit("visits", await newVisit(req.userId, "visit"));
 
       res.status(200).json({
         status: true,
