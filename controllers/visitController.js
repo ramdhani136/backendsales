@@ -32,7 +32,7 @@ const newVisitById = async (id, userId, type) => {
   if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
-  return await Visits.findAll({
+  return await Visits.findOne({
     where: finalWhere,
     include: [
       {
@@ -48,7 +48,7 @@ const newVisitById = async (id, userId, type) => {
       {
         model: db.customers,
         as: "customer",
-        attributes: ["id", "name", "type"],
+        attributes: ["id", "name", "type", "id_customerGroup", "status"],
         where: isCG.length > 0 && {
           id_customergroup: { [Op.or]: [isCG, 1000000] },
         },
@@ -219,7 +219,7 @@ const create = async (req, res) => {
         ],
         order: [["id", "DESC"]],
       });
-      IO.setEmit("visits", await newVisit(req.userId, "visit"));
+      IO.setEmit("visits", await newVisitById(visits.id, req.userId, "visit"));
 
       res.status(200).json({
         status: true,
@@ -286,7 +286,7 @@ const getAllVisit = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  // IO.setEmit("visits", await newVisit(req.userId, "visit"));
+  IO.setEmit("visits", await newVisitById(235, req.userId, "visit"));
   res.send(visits);
 };
 
@@ -399,9 +399,9 @@ const getOneVisit = async (req, res) => {
 
 const updateVisit = async (req, res) => {
   let id = req.params.id;
-
   const allData = await newVisit(req.userId, "visit");
   isResult = allData.filter((item) => item.id == id);
+
   if (isResult.length > 0) {
     try {
       await db.visits.update(req.body, {
@@ -432,7 +432,7 @@ const updateVisit = async (req, res) => {
                 console.log(info);
               }
             });
-          IO.setEmit("visits", await newVisit(req.userId, "visit"));
+          IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
           res.status(200).json({
             status: true,
             message: "successfully save data",
@@ -445,22 +445,19 @@ const updateVisit = async (req, res) => {
             .json({ status: false, message: `${error.table} is required` });
         }
       } else {
-        IO.setEmit("visits", await newVisit(req.userId, "visit"));
+        // IO.setEmit("visits", await newVisit(req.userId, "visit"));
         if (
           isResult[0].isSurvey === "0" &&
           isResult[0].status === "0" &&
           req.body.status === "1"
         ) {
           var myModul = await require("../utils/waBot");
-
           const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
-Mohon berikan rating dari Bapak/Ibu tentang komunikasi
-yang sudah dilakukan oleh tim sales kami.
-dari skala (tidak baik) 1-5 (sangat baik)
-
-dengan format penilaian sebagai berikut :
-#nomorcase_skala nilai (#VST0012022090001_5)`;
-
+  Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+  yang sudah dilakukan oleh tim sales kami.
+  dari skala (tidak baik) 1-5 (sangat baik)
+  dengan format penilaian sebagai berikut :
+  #nomorcase_skala nilai (#VST0012022090001_5)`;
           const send = await myModul.kirimpesan(
             isResult[0].phone,
             // isResult[0].name
@@ -490,6 +487,7 @@ dengan format penilaian sebagai berikut :
             );
           }
         }
+        IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
         res.status(200).json({
           status: true,
           message: "successfully update data",
@@ -543,7 +541,7 @@ const deleteVisit = async (req, res) => {
       } else {
         console.log("file tidak ditemukan");
       }
-      IO.setEmit("visits", await newVisit(req.userId, "visit"));
+      // IO.setEmit("visits", await newVisitById(235, req.userId, "visit"));
       res.status(200).json({
         status: true,
         message: "successfully delete data",
