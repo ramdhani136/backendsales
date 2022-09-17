@@ -286,7 +286,7 @@ const getAllVisit = async (req, res) => {
     ],
     order: [["id", "DESC"]],
   });
-  IO.setEmit("visits", await newVisitById(235, req.userId, "visit"));
+
   res.send(visits);
 };
 
@@ -541,7 +541,8 @@ const deleteVisit = async (req, res) => {
       } else {
         console.log("file tidak ditemukan");
       }
-      // IO.setEmit("visits", await newVisitById(235, req.userId, "visit"));
+      IO.setEmit("deleteVisit", id);
+
       res.status(200).json({
         status: true,
         message: "successfully delete data",
