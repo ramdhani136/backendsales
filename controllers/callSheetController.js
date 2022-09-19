@@ -29,7 +29,7 @@ const newCallSheetById = async (id, userId, type) => {
   if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
-  return await CallSheet.findAll({
+  return await CallSheet.findOne({
     where: finalWhere,
     include: [
       {
@@ -45,7 +45,7 @@ const newCallSheetById = async (id, userId, type) => {
       {
         model: db.customers,
         as: "customer",
-        attributes: ["id", "name", "type", "status"],
+        attributes: ["id", "name", "type", "id_customerGroup", "status"],
         where: isCG.length > 0 && { id_customerGroup: isCG },
         include: [
           {
@@ -148,7 +148,11 @@ const create = async (req, res) => {
   };
   try {
     let callsheet = await CallSheet.create(data);
-    IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+    IO.setEmit(
+      "callsheets",
+      await newCallSheetById(callsheet.id, req.userId, "callsheet")
+    );
+
     res.status(200).json({
       status: true,
       message: "successfully save data",
@@ -318,7 +322,10 @@ const updateCallSheet = async (req, res) => {
       await CallSheet.update(req.body, {
         where: { id: id },
       });
-      IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+      IO.setEmit(
+        "callsheets",
+        await newCallSheetById(id, req.userId, "callsheet")
+      );
       if (
         isResult[0].isSurvey === "0" &&
         isResult[0].status === "0" &&
@@ -391,7 +398,8 @@ const deleteCallSheet = async (req, res) => {
       await CallSheet.destroy({
         where: { id: id },
       });
-      IO.setEmit("callsheets", await newCallSheet(req.userId, "callsheet"));
+      IO.setEmit("deleteCallsheet", id);
+
       res.status(200).json({
         status: true,
         message: "successfully delete data",
