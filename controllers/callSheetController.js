@@ -338,7 +338,6 @@ const updateCallSheet = async (req, res) => {
 Mohon berikan rating dari Bapak/Ibu tentang komunikasi
 yang sudah dilakukan oleh tim sales kami.
 dari skala (tidak baik) 1-5 (sangat baik)
-
 `;
 
         let sections = [

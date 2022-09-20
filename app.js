@@ -105,7 +105,7 @@ dari skala (tidak baik) 1-5 (sangat baik)
     },
   ];
   let list = new List(message, "Rate", sections, "VST2022082222152", "footer");
-  await myModul.kirimpesan("089637428874", list);
+  await myModul.kirimpesan("08881118187@c.us", list);
   res.send("hjahja");
 });
 app.use("/device", verifyToken, PermissionData, deviceRouter);
