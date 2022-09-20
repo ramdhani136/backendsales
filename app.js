@@ -10,6 +10,7 @@ const path = require("path");
 const { WaBot } = require("./utils/waBot");
 const { PermissionData } = require("./middleware/DocRule");
 const { verifyToken } = require("./middleware/VerifiyToken");
+const { List } = require("whatsapp-web.js");
 // const expressBusboy = require("express-busboy");
 // const fileUpload = require("express-fileupload");
 // expressBusboy.extend(app);
@@ -68,6 +69,45 @@ const profileRoleRoute = require("./routes/roleProfileRoute");
 const roleListRoute = require("./routes/roleListRoute");
 const roleUserRoure = require("./routes/roleUserRoute");
 const permissionRoute = require("./routes/permissionRoute");
+var myModul = require("./utils/waBot");
+
+app.get("/coba", async (req, res) => {
+  const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
+Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+yang sudah dilakukan oleh tim sales kami.
+dari skala (tidak baik) 1-5 (sangat baik)
+`;
+  let sections = [
+    {
+      title: "Silahkan berikan penilaian :)",
+      rows: [
+        {
+          title: "#CST00120220900131_1",
+          description: "⭐",
+        },
+        {
+          title: "#CST00120220900131_2",
+          description: "⭐⭐",
+        },
+        {
+          title: "#CST00120220900131_3",
+          description: "⭐⭐⭐",
+        },
+        {
+          title: "#CST00120220900131_4",
+          description: "⭐⭐⭐⭐",
+        },
+        {
+          title: "#CST00120220900131_5",
+          description: "⭐⭐⭐⭐⭐",
+        },
+      ],
+    },
+  ];
+  let list = new List(message, "Rate", sections, "VST2022082222152", "footer");
+  await myModul.kirimpesan("089637428874", list);
+  res.send("hjahja");
+});
 app.use("/device", verifyToken, PermissionData, deviceRouter);
 app.use("/branch", verifyToken, PermissionData, branchRouter);
 app.use("/users", userRouter);

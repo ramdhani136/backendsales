@@ -8,6 +8,7 @@ const {
 var IO = require("../app");
 const { paddy } = require("../utils/paddy");
 const { Op } = require("sequelize");
+const { List } = require("whatsapp-web.js");
 const CallSheet = db.callsheets;
 
 //  isCG.length > 0 && { id_customergroup: { [Op.or]: [isCG, 1000000] } },
@@ -338,22 +339,56 @@ Mohon berikan rating dari Bapak/Ibu tentang komunikasi
 yang sudah dilakukan oleh tim sales kami.
 dari skala (tidak baik) 1-5 (sangat baik)
 
-dengan format penilaian sebagai berikut :
-#nomorcase_skala nilai (#VST0012022090001_5)`;
+`;
 
+        let sections = [
+          {
+            title: "Silahkan berikan penilaian :)",
+            rows: [
+              {
+                title: `#${isResult[0].name}_1`,
+                description: "⭐",
+              },
+              {
+                title: `#${isResult[0].name}_2`,
+                description: "⭐⭐",
+              },
+              {
+                title: `#${isResult[0].name}_3`,
+                description: "⭐⭐⭐",
+              },
+              {
+                title: `#${isResult[0].name}_4`,
+                description: "⭐⭐⭐⭐",
+              },
+              {
+                title: `#${isResult[0].name}_5`,
+                description: "⭐⭐⭐⭐⭐",
+              },
+            ],
+          },
+        ];
+        let list = new List(
+          message,
+          "Rate",
+          sections,
+          `${isResult[0].name}`,
+          "footer"
+        );
         const send = await myModul.kirimpesan(
           isResult[0].phone,
           // isResult[0].name
-          message
+          list
         );
-        await myModul.kirimpesan(
-          isResult[0].phone,
-          "👇👇copy dan lanjutkan dari number case dibawah ini 👇👇"
-        );
-        await myModul.kirimpesan(
-          isResult[0].phone,
-          `#${isResult[0].name}_gantidenganratinganda`
-        );
+
+        // await myModul.kirimpesan(
+        //   isResult[0].phone,
+        //   "👇👇copy dan lanjutkan dari number case dibawah ini 👇👇"
+        // );
+        // await myModul.kirimpesan(
+        //   isResult[0].phone,
+        //   `#${isResult[0].name}_gantidenganratinganda`
+        // );
         if (send) {
           await db.callsheets.update(
             { isSurvey: "1" },

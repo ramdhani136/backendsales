@@ -1,4 +1,4 @@
-const { Client, LocalAuth } = require("whatsapp-web.js");
+const { Client, LocalAuth, List } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const db = require("../models");
 const { phoneNumberFormatter } = require("./formatter");
