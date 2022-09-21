@@ -327,83 +327,75 @@ const updateCallSheet = async (req, res) => {
         "callsheets",
         await newCallSheetById(id, req.userId, "callsheet")
       );
-      if (
-        isResult[0].isSurvey === "0" &&
-        isResult[0].status === "0" &&
-        req.body.status === "1"
-      ) {
-        var myModul = await require("../utils/waBot");
+      //       if (
+      //         isResult[0].isSurvey === "0" &&
+      //         isResult[0].status === "0" &&
+      //         req.body.status === "1"
+      //       ) {
+      //         var myModul = await require("../utils/waBot");
 
-        const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
-Mohon berikan rating dari Bapak/Ibu tentang komunikasi
-yang sudah dilakukan oleh tim sales kami.
-dari skala (tidak baik) 1-5 (sangat baik)
-`;
+      //         const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
+      // Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+      // yang sudah dilakukan oleh tim sales kami.
+      // dari skala (tidak baik) 1-5 (sangat baik)
+      // `;
 
-        let sections = [
-          {
-            title: "Silahkan berikan penilaian :)",
-            rows: [
-              {
-                title: `#${isResult[0].name}_1`,
-                description: "⭐",
-              },
-              {
-                title: `#${isResult[0].name}_2`,
-                description: "⭐⭐",
-              },
-              {
-                title: `#${isResult[0].name}_3`,
-                description: "⭐⭐⭐",
-              },
-              {
-                title: `#${isResult[0].name}_4`,
-                description: "⭐⭐⭐⭐",
-              },
-              {
-                title: `#${isResult[0].name}_5`,
-                description: "⭐⭐⭐⭐⭐",
-              },
-            ],
-          },
-        ];
-        let list = new List(
-          message,
-          "Rate",
-          sections,
-          `${isResult[0].name}`,
-          "footer"
-        );
-        const send = await myModul.kirimpesan(
-          isResult[0].phone,
-          // isResult[0].name
-          list
-        );
+      //         let sections = [
+      //           {
+      //             title: "Silahkan berikan penilaian :)",
+      //             rows: [
+      //               {
+      //                 title: `#${isResult[0].name}_1`,
+      //                 description: "⭐",
+      //               },
+      //               {
+      //                 title: `#${isResult[0].name}_2`,
+      //                 description: "⭐⭐",
+      //               },
+      //               {
+      //                 title: `#${isResult[0].name}_3`,
+      //                 description: "⭐⭐⭐",
+      //               },
+      //               {
+      //                 title: `#${isResult[0].name}_4`,
+      //                 description: "⭐⭐⭐⭐",
+      //               },
+      //               {
+      //                 title: `#${isResult[0].name}_5`,
+      //                 description: "⭐⭐⭐⭐⭐",
+      //               },
+      //             ],
+      //           },
+      //         ];
+      //         let list = new List(
+      //           message,
+      //           "Rate",
+      //           sections,
+      //           `${isResult[0].name}`,
+      //           "footer"
+      //         );
+      //         const send = await myModul.kirimpesan(
+      //           isResult[0].phone,
+      //           // isResult[0].name
+      //           list
+      //         );
 
-        // await myModul.kirimpesan(
-        //   isResult[0].phone,
-        //   "👇👇copy dan lanjutkan dari number case dibawah ini 👇👇"
-        // );
-        // await myModul.kirimpesan(
-        //   isResult[0].phone,
-        //   `#${isResult[0].name}_gantidenganratinganda`
-        // );
-        if (send) {
-          await db.callsheets.update(
-            { isSurvey: "1" },
-            {
-              where: { id: id },
-            }
-          );
-        } else {
-          await db.callsheets.update(
-            { isSurvey: "2" },
-            {
-              where: { id: id },
-            }
-          );
-        }
-      }
+      //         if (send) {
+      //           await db.callsheets.update(
+      //             { isSurvey: "1" },
+      //             {
+      //               where: { id: id },
+      //             }
+      //           );
+      //         } else {
+      //           await db.callsheets.update(
+      //             { isSurvey: "2" },
+      //             {
+      //               where: { id: id },
+      //             }
+      //           );
+      //         }
+      //       }
       res.status(200).json({
         status: true,
         message: "successfully update data",
