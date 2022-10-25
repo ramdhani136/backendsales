@@ -33,6 +33,7 @@ db.rolelists = require("./roleList")(sequelize, DataTypes);
 db.roleusers = require("./roleUser")(sequelize, DataTypes);
 db.taskvisit = require("./taskVisitModel")(sequelize, DataTypes);
 db.permission = require("./permissionModel")(sequelize, DataTypes);
+db.contact = require("./contactModel")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("resync!");
@@ -84,6 +85,21 @@ db.callsheets.belongsTo(db.branch, {
 });
 
 db.callsheets.belongsTo(db.customers, {
+  foreignKey: "id_customer",
+  as: "customer",
+});
+
+db.contact.belongsTo(db.users, {
+  foreignKey: "id_user",
+  as: "user",
+});
+
+db.contact.belongsTo(db.branch, {
+  foreignKey: "id_branch",
+  as: "branch",
+});
+
+db.contact.belongsTo(db.customers, {
   foreignKey: "id_customer",
   as: "customer",
 });
@@ -142,6 +158,11 @@ db.devices.belongsTo(db.branch, {
 db.rolelists.belongsTo(db.users, {
   foreignKey: "id_user",
   as: "user",
+});
+
+db.rolelists.belongsTo(db.roleprofiles, {
+  foreignKey: "id_role",
+  as: "role",
 });
 
 //Role profile

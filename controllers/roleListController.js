@@ -42,7 +42,11 @@ const create = async (req, res) => {
 const getAllRoleList = async (req, res) => {
   let rolelist = await RoleList.findAll({
     order: [["doc", "ASC"]],
-    include: [{ model: db.users, as: "user", attributes: ["id", "name"] }],
+    include: [
+      { model: db.users, as: "user", attributes: ["id", "name"] },
+      { model: db.roleprofiles, as: "role", attributes: ["id", "name"] },
+    
+    ],
   });
   IO.setEmit("rolelist", await newData());
   res.send(rolelist);

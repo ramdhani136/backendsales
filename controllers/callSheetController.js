@@ -153,6 +153,10 @@ const create = async (req, res) => {
       "callsheets",
       await newCallSheetById(callsheet.id, req.userId, "callsheet")
     );
+    IO.setEmit(
+      "allCallsheet",
+      await newCallSheet(req.userId, "callsheet")
+    );
 
     res.status(200).json({
       status: true,
@@ -327,6 +331,10 @@ const updateCallSheet = async (req, res) => {
         "callsheets",
         await newCallSheetById(id, req.userId, "callsheet")
       );
+      IO.setEmit(
+        "allCallsheet",
+        await newCallSheet(req.userId, "callsheet")
+      );
       //       if (
       //         isResult[0].isSurvey === "0" &&
       //         isResult[0].status === "0" &&
@@ -425,6 +433,10 @@ const deleteCallSheet = async (req, res) => {
         where: { id: id },
       });
       IO.setEmit("deleteCallsheet", id);
+      IO.setEmit(
+        "allCallsheet",
+        await newCallSheet(req.userId, "callsheet")
+      );
 
       res.status(200).json({
         status: true,
@@ -445,6 +457,59 @@ const deleteCallSheet = async (req, res) => {
   }
 };
 
+
+const getByName = async (req, res) => {
+  const isBranch = await permissionBranch(req.userId, "callsheet");
+  const isCG = await permissionCG(req.userId, "callsheet");
+  const isCustomer = await permissionCustomer(req.userId, "callsheet");
+  const isUser = await permissionUser(req.userId, "callsheet");
+  let name = req.params.name;
+  let callsheets = await CallSheet.findOne({
+    where: [
+      { name: name },
+      isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+      isCustomer.length > 0 && {
+        id_customer: { [Op.or]: [isCustomer, 1000000] },
+      },
+      isUser.length > 0 && { id_user: isUser },
+    ],
+    include: [
+      {
+        model: db.users,
+        as: "user",
+        attributes: ["id", "name", "username", "email", "phone"],
+      },
+      {
+        model: db.branch,
+        as: "branch",
+        attributes: ["id", "name"],
+      },
+      {
+        model: db.customers,
+        as: "customer",
+        attributes: ["id", "name", "type", "id_customerGroup", "status"],
+        where: isCG.length > 0 && { id_customerGroup: isCG },
+        include: [
+          {
+            model: db.customergroup,
+            as: "customergroup",
+            attributes: ["id", "name", "deskripsi", "status"],
+          },
+        ],
+      },
+    ],
+    order: [["id", "DESC"]],
+  });
+  if (callsheets) {
+    res.status(200).send(callsheets);
+  } else {
+    res.status(400).json({
+      status: false,
+      message: "No data or you don't have access to this document!",
+    });
+  }
+};
+
 module.exports = {
   create,
   getAllCallSheet,
@@ -452,4 +517,5 @@ module.exports = {
   updateCallSheet,
   deleteCallSheet,
   getByStatus,
+  getByName
 };

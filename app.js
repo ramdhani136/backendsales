@@ -17,7 +17,8 @@ const { List } = require("whatsapp-web.js");
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    // origin: "*",
+    origin: ["*", "http://localhost:3000"],
     methods: ["GET", "POST"],
     transports: ["websocket", "polling", "flashsocket"],
     allowedHeaders: ["react-client"],
@@ -26,7 +27,7 @@ const io = new Server(server, {
 });
 
 const corsOptions = {
-  origin: "*",
+  origin: ["*", "http://localhost:3000"],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -69,7 +70,9 @@ const profileRoleRoute = require("./routes/roleProfileRoute");
 const roleListRoute = require("./routes/roleListRoute");
 const roleUserRoure = require("./routes/roleUserRoute");
 const permissionRoute = require("./routes/permissionRoute");
+const contactRoute = require("./routes/contactRoute");
 var myModul = require("./utils/waBot");
+const { contact } = require("./models");
 
 app.get("/coba", async (req, res) => {
   const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
@@ -115,6 +118,7 @@ app.use("/customergroup", verifyToken, PermissionData, cgRouter);
 app.use("/customer", verifyToken, PermissionData, customerRoute);
 // app.use("/visit", visitRoute);
 app.use("/visit", verifyToken, PermissionData, visitRoute);
+app.use("/contact", verifyToken, contactRoute);
 app.use("/callsheet", verifyToken, PermissionData, callSheetRoute);
 app.use("/roleprofile", verifyToken, PermissionData, profileRoleRoute);
 app.use("/rolelist", verifyToken, PermissionData, roleListRoute);

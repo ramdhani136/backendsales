@@ -1,5 +1,6 @@
 const db = require("../models");
 
+
 const permissionBranch = async (userId, type) => {
   let allDoc = await db.permission.findAll({
     where: [{ id_user: userId }, { allow: "branch" }, { alldoc: true }],
