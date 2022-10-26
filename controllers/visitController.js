@@ -651,6 +651,60 @@ const getByName = async (req, res) => {
   }
 };
 
+const getByUser = async (req, res) => {
+  const isBranch = await permissionBranch(req.userId, "visit");
+  const isCG = await permissionCG(req.userId, "visit");
+  const isCustomer = await permissionCustomer(req.userId, "visit");
+  const isUser = await permissionUser(req.userId, "visit");
+  let id = req.params.id;
+  let visits = await Visits.findAll({
+    where: [
+      { id_user: id },
+      isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
+      isCustomer.length > 0 && {
+        id_customer: { [Op.or]: [isCustomer, 1000000] },
+      },
+      isUser.length > 0 && { id_user: isUser },
+    ],
+    include: [
+      {
+        model: db.users,
+        as: "user",
+        attributes: ["id", "name", "username", "email", "phone"],
+      },
+      {
+        model: db.branch,
+        as: "branch",
+        attributes: ["id", "name"],
+      },
+      {
+        model: db.customers,
+        as: "customer",
+        attributes: ["id", "name", "type"],
+        where: isCG.length > 0 && {
+          id_customergroup: { [Op.or]: [isCG, 1000000] },
+        },
+        include: [
+          {
+            model: db.customergroup,
+            as: "customergroup",
+            attributes: ["id", "name", "deskripsi", "status"],
+          },
+        ],
+      },
+    ],
+    order: [["id", "DESC"]],
+  });
+  if (visits) {
+    res.status(200).send(visits);
+  } else {
+    res.status(400).json({
+      status: false,
+      message: "No data or you don't have access to this document!",
+    });
+  }
+};
+
 module.exports = {
   create,
   getAllVisit,
@@ -659,5 +713,6 @@ module.exports = {
   deleteVisit,
   message,
   getByStatus,
-  getByName
+  getByName,
+  getByUser
 };

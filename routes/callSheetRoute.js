@@ -9,5 +9,6 @@ router.put("/:id", callSheet.updateCallSheet);
 router.delete("/:id", callSheet.deleteCallSheet);
 router.get("/status/:status", callSheet.getByStatus);
 router.get("/view/:name", callSheet.getByName);
+router.get("/user/:id", callSheet.getByUser);
 
 module.exports = router;

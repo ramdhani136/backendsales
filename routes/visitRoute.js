@@ -24,5 +24,6 @@ router.get("/status/:status", visit.getByStatus);
 router.put("/:id", upload.single("upimg"), visit.updateVisit);
 router.delete("/:id", visit.deleteVisit);
 router.post("/send/message", visit.message);
+router.get("/user/:id", visit.getByUser);
 
 module.exports = router;

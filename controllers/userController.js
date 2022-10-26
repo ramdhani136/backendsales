@@ -221,7 +221,7 @@ const getUsersById = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const { name, username, email, password, confpassword, phone, img } =
+  const { name, username, email, password, confpassword, phone, img,status } =
     req.body;
   if (password !== confpassword)
     return res.status(400).json({
@@ -238,6 +238,7 @@ const register = async (req, res) => {
       password: hashPassword,
       phone: phone,
       img: img,
+      status:status
     });
     IO.setEmit("users", await newUsers(req.userId, "user"));
     res.status(200).send(user);
