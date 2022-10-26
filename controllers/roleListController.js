@@ -6,7 +6,11 @@ const RoleList = db.rolelists;
 const newData = async () => {
   return await RoleList.findAll({
     order: [["doc", "ASC"]],
-    include: [{ model: db.users, as: "user", attributes: ["id", "name"] }],
+    include: [
+      { model: db.users, as: "user", attributes: ["id", "name"] },
+      { model: db.roleprofiles, as: "role", attributes: ["id", "name"] },
+    
+    ],
   });
 };
 
