@@ -12,7 +12,7 @@ const newProfile = async (userId, type) => {
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [];
-  if (isBranch.lengt > 0 || isUser.lengt > 0) {
+  if (isBranch.length > 0 || isUser.length > 0) {
     finalWhere = isWhere;
   }
   return await RoleProfile.findAll({
@@ -79,29 +79,30 @@ const getAllProfile = async (req, res) => {
   let roleprofile = await RoleProfile.findAll({
     where: finalWhere,
     order: [["name", "ASC"]],
-    include: [
-      {
-        model: db.rolelists,
-        as: "rolelist",
-        where: {
-          status: 1,
-        },
-        attributes: [
-          "id",
-          "doc",
-          "create",
-          "read",
-          "update",
-          "delete",
-          "amend",
-          "submit",
-          "report",
-          "export",
-        ],
-      },
-      { model: db.users, as: "user", attributes: ["id", "name"] },
-      { model: db.branch, as: "branch", attributes: ["id", "name"] },
-    ],
+    // DIUBAH NANTI DI CEK
+    // include: [
+    //   {
+    //     model: db.rolelists,
+    //     as: "rolelist",
+    //     where: {
+    //       status: true,
+    //     },
+    //     attributes: [
+    //       "id",
+    //       "doc",
+    //       "create",
+    //       "read",
+    //       "update",
+    //       "delete",
+    //       "amend",
+    //       "submit",
+    //       "report",
+    //       "export",
+    //     ],
+    //   },
+    //   { model: db.users, as: "user", attributes: ["id", "name"] },
+    //   { model: db.branch, as: "branch", attributes: ["id", "name"] },
+    // ],
   });
   IO.setEmit("roleprofiles", await newProfile(req.userId, "roleprofile"));
   res.send(roleprofile);
@@ -119,25 +120,25 @@ const getOneProfile = async (req, res) => {
     ],
 
     include: [
-      {
-        model: db.rolelists,
-        as: "rolelist",
-        where: {
-          status: 1,
-        },
-        attributes: [
-          "id",
-          "doc",
-          "create",
-          "read",
-          "update",
-          "delete",
-          "amend",
-          "submit",
-          "report",
-          "export",
-        ],
-      },
+      // {
+      //   model: db.rolelists,
+      //   as: "rolelist",
+      //   where: {
+      //     status: 1,
+      //   },
+      //   attributes: [
+      //     "id",
+      //     "doc",
+      //     "create",
+      //     "read",
+      //     "update",
+      //     "delete",
+      //     "amend",
+      //     "submit",
+      //     "report",
+      //     "export",
+      //   ],
+      // },
       { model: db.users, as: "user", attributes: ["id", "name"] },
       { model: db.branch, as: "branch", attributes: ["id", "name"] },
     ],

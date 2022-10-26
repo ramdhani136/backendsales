@@ -39,7 +39,7 @@ const newData = async () => {
 const create = async (req, res) => {
   let input = {
     id_roleprofile: req.body.id_roleprofile,
-    uniqid: req.body.id_roleprofile.tiString() + req.body.id_user.toString(),
+    uniqid: req.body.id_roleprofile.toString() + req.body.id_user.toString(),
     id_user: req.body.id_user,
   };
 
@@ -119,8 +119,9 @@ const updateData = async (req, res) => {
 const deleteData = async (req, res) => {
   let id = req.params.id;
   try {
-    const data = await IsData.destroy({ where: { id: id } });
-    if (hapdataus > 0) {
+    const data = await IsData.destroy({ where: { uniqid: id } });
+    console.log(data)
+    if (data > 0) {
       IO.setEmit("roleusers", await newData());
       res.status(200).json({
         status: true,
@@ -131,8 +132,46 @@ const deleteData = async (req, res) => {
       res.status(400).json({ status: false, message: "No data" });
     }
   } catch (error) {
+    res.send(error)
     res.status(400).json({ status: false, message: "failed to delete data" });
   }
+};
+
+
+const getByUser = async (req, res) => {
+  let data = await IsData.findAll({
+     where: { id_user: req.params.id } ,
+    attributes: ["id", "id_roleprofile", "status"],
+    include: [
+      {
+        model: db.roleprofiles,
+        as: "roleprofile",
+        attributes: ["id", "name", "status"],
+        include: [
+          {
+            model: db.rolelists,
+            as: "rolelist",
+            attributes: [
+              "id",
+              "doc",
+              "create",
+              "read",
+              "update",
+              "delete",
+              "amend",
+              "submit",
+              "report",
+              "export",
+              "status",
+            ],
+          },
+        ],
+      },
+    ],
+    order: [["id", "DESC"]],
+  });
+  IO.setEmit("roleusers", await newData());
+  res.send(data);
 };
 
 module.exports = {
@@ -141,4 +180,5 @@ module.exports = {
   getOneData,
   updateData,
   deleteData,
+  getByUser
 };
