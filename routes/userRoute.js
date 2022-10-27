@@ -31,5 +31,6 @@ router.put(
 router.post("/login", users.login);
 router.get("/token/:id", users.refreshToken);
 router.delete("/logout", users.logout);
+router.delete("/:id", users.deleteUser);
 
 module.exports = router;

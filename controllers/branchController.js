@@ -1,5 +1,5 @@
 const db = require("../models");
-const { permissionBranch } = require("../utils/getPermission");
+const { permissionBranch } = require("../middleware/getPermission");
 var IO = require("../app");
 const { Op } = require("sequelize");
 

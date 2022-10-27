@@ -6,7 +6,7 @@ const {
   permissionCG,
   permissionCustomer,
   permissionUser,
-} = require("../utils/getPermission");
+} = require("../middleware/getPermission");
 const { Op } = require("sequelize");
 const { paddy } = require("../utils/paddy");
 var IO = require("../app");

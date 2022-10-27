@@ -1,7 +1,7 @@
 const db = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { permissionUser } = require("../utils/getPermission");
+const { permissionUser } = require("../middleware/getPermission");
 var IO = require("../app");
 const Users = db.users;
 const sharp = require("sharp");
@@ -226,7 +226,7 @@ const register = async (req, res) => {
   if (password !== confpassword)
     return res.status(400).json({
       status: false,
-      message: "Password dan confirm password tidak cocok",
+      message: "Password is required",
     });
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
@@ -240,7 +240,6 @@ const register = async (req, res) => {
       img: img,
       status: status,
     });
-
 
     if (req.file != undefined) {
       let istitik = req.file.originalname.indexOf(".");
@@ -289,12 +288,9 @@ const register = async (req, res) => {
       res.status(200).json({
         status: true,
         msg: "Success",
-        data: await newUsersById(id, req.userId, "user"),
+        data: user,
       });
     }
-
-
-
   } catch (error) {
     res.json(error);
   }
@@ -567,6 +563,31 @@ const updateData = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  let id = req.params.id;
+  try {
+    const result = await db.users.destroy({
+      where: { id: id },
+    });
+    if (result > 0) {
+      res.status(200).json({
+        status: true,
+        message: "successfully delete data",
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        message: "Error",
+      });
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error,
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   register,
@@ -575,4 +596,5 @@ module.exports = {
   logout,
   getUsersById,
   updateData,
+  deleteUser,
 };

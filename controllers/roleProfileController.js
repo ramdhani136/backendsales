@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const db = require("../models");
-const { permissionBranch, permissionUser } = require("../utils/getPermission");
+const { permissionBranch, permissionUser } = require("../middleware/getPermission");
 var IO = require("../app");
 const RoleProfile = db.roleprofiles;
 

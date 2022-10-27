@@ -4,7 +4,7 @@ const {
   permissionCG,
   permissionCustomer,
   permissionUser,
-} = require("../utils/getPermission");
+} = require("../middleware/getPermission");
 const { Op } = require("sequelize");
 var IO = require("../app");
 const Contact = db.contact;
