@@ -221,7 +221,7 @@ const getUsersById = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const { name, username, email, password, confpassword, phone, img,status } =
+  const { name, username, email, password, confpassword, phone, img, status } =
     req.body;
   if (password !== confpassword)
     return res.status(400).json({
@@ -238,10 +238,63 @@ const register = async (req, res) => {
       password: hashPassword,
       phone: phone,
       img: img,
-      status:status
+      status: status,
     });
-    IO.setEmit("users", await newUsers(req.userId, "user"));
-    res.status(200).send(user);
+
+
+    if (req.file != undefined) {
+      let istitik = req.file.originalname.indexOf(".");
+
+      let typeimage = req.file.originalname.slice(istitik, 200);
+      try {
+        const compressedImage = await path.join(
+          __dirname,
+          "../public/users",
+          `${user.dataValues.name}${typeimage}`
+        );
+        await sharp(req.file.path)
+          .resize(640, 480, {
+            fit: sharp.fit.inside,
+            withoutEnlargement: true,
+          })
+          .jpeg({
+            quality: 100,
+            progressive: true,
+            chromaSubsampling: "4:4:4",
+          })
+          .withMetadata()
+          .toFile(compressedImage, (err, info) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(info);
+            }
+          });
+        await db.users.update(
+          { img: `${user.dataValues.name}${typeimage}` },
+          {
+            where: { id: user.dataValues.id },
+          }
+        );
+        res.status(200).json({
+          status: true,
+          message: "successfully save data",
+          data: user,
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(400).json({ status: false, message: error });
+      }
+    } else {
+      res.status(200).json({
+        status: true,
+        msg: "Success",
+        data: await newUsersById(id, req.userId, "user"),
+      });
+    }
+
+
+
   } catch (error) {
     res.json(error);
   }

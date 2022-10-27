@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/", verifyToken, PermissionData, users.register);
+router.post("/", upload.single("upimg"), verifyToken, PermissionData, users.register);
 router.get("/", verifyToken, PermissionData, users.getUsers);
 router.get("/:id", verifyToken, PermissionData, users.getUsersById);
 router.put(
