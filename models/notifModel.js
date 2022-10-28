@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     remark: { type: DataTypes.TEXT, allowNull: true },
-    status: { type: DataTypes.BOOLEAN, defaultValue: 1 },
+    status: { type: DataTypes.BOOLEAN, defaultValue: 0 },
   });
 
   return Notif;
