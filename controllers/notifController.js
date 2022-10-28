@@ -60,4 +60,38 @@ const getAll = async (req, res) => {
   res.send(finalData);
 };
 
-module.exports = { getAll };
+const update = async (req, res) => {
+  const update = await Notif.update(req.body, {
+    where: { id: req.params.id },
+  });
+  res.send(update);
+};
+
+const deleteByParams = async (req, res) => {
+  try {
+    const update = await Notif.destroy({
+      where: [{ id_params: req.params.id }, { doc: req.params.doc }],
+    });
+
+    if (update === 1) {
+      IO.setEmit("notif", true);
+      res.status(200).json({
+        status: true,
+        message: "successfully delete data",
+        data: update,
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        message: error,
+      });
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error,
+    });
+  }
+};
+
+module.exports = { getAll, update, deleteByParams };

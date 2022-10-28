@@ -149,14 +149,24 @@ const create = async (req, res) => {
   };
   try {
     let callsheet = await CallSheet.create(data);
+    const setNotif = await db.notif.create({
+      id_user: req.userId,
+      action: "post",
+      doc: "callsheet",
+      page: "callsheet",
+      id_params: callsheet.id,
+      remark: "",
+      status: 0,
+    });
+
+    if (setNotif) {
+      IO.setEmit("notif", true);
+    }
     IO.setEmit(
       "callsheets",
       await newCallSheetById(callsheet.id, req.userId, "callsheet")
     );
-    IO.setEmit(
-      "allCallsheet",
-      await newCallSheet(req.userId, "callsheet")
-    );
+    IO.setEmit("allCallsheet", await newCallSheet(req.userId, "callsheet"));
 
     res.status(200).json({
       status: true,
@@ -331,10 +341,7 @@ const updateCallSheet = async (req, res) => {
         "callsheets",
         await newCallSheetById(id, req.userId, "callsheet")
       );
-      IO.setEmit(
-        "allCallsheet",
-        await newCallSheet(req.userId, "callsheet")
-      );
+      IO.setEmit("allCallsheet", await newCallSheet(req.userId, "callsheet"));
       //       if (
       //         isResult[0].isSurvey === "0" &&
       //         isResult[0].status === "0" &&
@@ -404,6 +411,19 @@ const updateCallSheet = async (req, res) => {
       //           );
       //         }
       //       }
+      const setNotif = await db.notif.create({
+        id_user: req.userId,
+        action: "put",
+        doc: "callsheet",
+        page: "callsheet",
+        id_params: id,
+        remark: "",
+        status: 0,
+      });
+  
+      if (setNotif) {
+        IO.setEmit("notif", true);
+      }
       res.status(200).json({
         status: true,
         message: "successfully update data",
@@ -432,11 +452,21 @@ const deleteCallSheet = async (req, res) => {
       await CallSheet.destroy({
         where: { id: id },
       });
+       const setNotif = await db.notif.create({
+        id_user: req.userId,
+        action: "put",
+        doc: "callsheet",
+        page: "callsheet",
+        id_params: id,
+        remark: "",
+        status: 0,
+      });
+  
+      if (setNotif) {
+        IO.setEmit("notif", true);
+      }
       IO.setEmit("deleteCallsheet", id);
-      IO.setEmit(
-        "allCallsheet",
-        await newCallSheet(req.userId, "callsheet")
-      );
+      IO.setEmit("allCallsheet", await newCallSheet(req.userId, "callsheet"));
 
       res.status(200).json({
         status: true,
@@ -456,7 +486,6 @@ const deleteCallSheet = async (req, res) => {
     });
   }
 };
-
 
 const getByName = async (req, res) => {
   const isBranch = await permissionBranch(req.userId, "callsheet");
@@ -562,7 +591,6 @@ const getByUser = async (req, res) => {
   }
 };
 
-
 module.exports = {
   create,
   getAllCallSheet,
@@ -572,5 +600,5 @@ module.exports = {
   getByStatus,
   getByName,
   getByUser,
-  newCallSheet
+  newCallSheet,
 };
