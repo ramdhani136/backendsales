@@ -45,6 +45,10 @@ const PermissionData = (req, res, next) => {
               break;
             case "/permission":
               return role.doc == "permission";
+            case "/contact":
+              return role.doc == "contact";
+            case "/notif":
+              return role.doc == "notif";
               break;
           }
         });

@@ -22,7 +22,9 @@ module.exports = (sequelize, DataTypes) => {
         "user",
         "rolelist",
         "roleuser",
-        "permission"
+        "permission",
+        "contact",
+        "notif"
       ),
       allowNull: false,
     },

@@ -34,12 +34,20 @@ db.roleusers = require("./roleUser")(sequelize, DataTypes);
 db.taskvisit = require("./taskVisitModel")(sequelize, DataTypes);
 db.permission = require("./permissionModel")(sequelize, DataTypes);
 db.contact = require("./contactModel")(sequelize, DataTypes);
+db.notif = require("./notifModel")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("resync!");
 });
 
 // relasi table db
+
+// notif
+db.notif.belongsTo(db.users, {
+  foreignKey: "id_user",
+  as: "user",
+});
+
 // Branch
 db.branch.belongsTo(db.users, {
   foreignKey: "id_user",

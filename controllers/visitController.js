@@ -83,7 +83,7 @@ const newVisit = async (userId, type) => {
     finalWhere = isWhere;
   }
   return await Visits.findAll({
-    // where: finalWhere,
+    where: finalWhere,
     include: [
       {
         model: db.users,
@@ -714,5 +714,6 @@ module.exports = {
   message,
   getByStatus,
   getByName,
-  getByUser
+  getByUser,
+  newVisit
 };

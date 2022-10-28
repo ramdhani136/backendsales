@@ -71,6 +71,7 @@ const roleListRoute = require("./routes/roleListRoute");
 const roleUserRoure = require("./routes/roleUserRoute");
 const permissionRoute = require("./routes/permissionRoute");
 const contactRoute = require("./routes/contactRoute");
+const notifRoute = require("./routes/notifRoute");
 var myModul = require("./utils/waBot");
 const { contact } = require("./models");
 
@@ -118,12 +119,13 @@ app.use("/customergroup", verifyToken, PermissionData, cgRouter);
 app.use("/customer", verifyToken, PermissionData, customerRoute);
 // app.use("/visit", visitRoute);
 app.use("/visit", verifyToken, PermissionData, visitRoute);
-app.use("/contact", verifyToken, contactRoute);
+app.use("/contact", verifyToken,PermissionData, contactRoute);
 app.use("/callsheet", verifyToken, PermissionData, callSheetRoute);
 app.use("/roleprofile", verifyToken, PermissionData, profileRoleRoute);
 app.use("/rolelist", verifyToken, PermissionData, roleListRoute);
 app.use("/roleuser", verifyToken, PermissionData, roleUserRoure);
 app.use("/permission", verifyToken, PermissionData, permissionRoute);
+app.use("/notif", verifyToken, PermissionData, notifRoute);
 app.get("*", function (req, res) {
   res.status(404).send("404 NOT FOUND");
 });

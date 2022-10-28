@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
         "roleuser",
         "roleprofile",
         "user",
-        "branch"
+        "branch",
+        "contact",
       ),
       allowNull: true,
     },

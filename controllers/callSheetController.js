@@ -76,7 +76,7 @@ const newCallSheet = async (userId, type) => {
     finalWhere = isWhere;
   }
   return await CallSheet.findAll({
-    // where: finalWhere,
+    where: finalWhere,
     include: [
       {
         model: db.users,
@@ -92,7 +92,7 @@ const newCallSheet = async (userId, type) => {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "id_customerGroup", "status"],
-        // where: isCG.length > 0 && { id_customerGroup: isCG },
+        where: isCG.length > 0 && { id_customerGroup: isCG },
         include: [
           {
             model: db.customergroup,
@@ -571,5 +571,6 @@ module.exports = {
   deleteCallSheet,
   getByStatus,
   getByName,
-  getByUser
+  getByUser,
+  newCallSheet
 };
