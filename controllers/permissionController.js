@@ -25,6 +25,7 @@ const create = async (req, res) => {
         req.body.id_created.toString(),
     allow: req.body.allow,
     value: req.body.value,
+    alldoc: req.body.alldoc,
     id_created: req.body.id_created,
     doc: req.body.doc,
   };
@@ -54,10 +55,22 @@ const getAllData = async (req, res) => {
   res.send(data);
 };
 
-const getOneData = async (req, res) => {
+const getByUser = async (req, res) => {
   let id = req.params.id;
   let data = await IsData.findAll({
     where: { id_user: id },
+    include: [
+      { model: db.users, as: "user", attributes: ["id", "name"] },
+      { model: db.users, as: "created", attributes: ["id", "name"] },
+    ],
+  });
+  res.status(200).send(data);
+};
+
+const getOneData = async (req, res) => {
+  let id = req.params.id;
+  let data = await IsData.findAll({
+    where: { id: id },
     include: [
       { model: db.users, as: "user", attributes: ["id", "name"] },
       { model: db.users, as: "created", attributes: ["id", "name"] },
@@ -89,7 +102,7 @@ const deleteData = async (req, res) => {
   let id = req.params.id;
   try {
     const data = await IsData.destroy({ where: { id: id } });
-    if (hapdataus > 0) {
+    if (data > 0) {
       IO.setEmit("permission", await newData());
       res.status(200).json({
         status: true,
@@ -110,4 +123,5 @@ module.exports = {
   getOneData,
   updateData,
   deleteData,
+  getByUser,
 };
