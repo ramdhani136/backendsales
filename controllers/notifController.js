@@ -4,10 +4,6 @@ const callsheet = require("../controllers/callSheetController");
 
 const Notif = db.notif;
 
-const getData = async (doc) => {
-  return doc;
-};
-
 const getAll = async (req, res) => {
   const visits = await visit.newVisit(req.userId, "visit");
   const callsheets = await callsheet.newCallSheet(req.userId, "callsheet");
@@ -20,6 +16,7 @@ const getAll = async (req, res) => {
         attributes: ["id", "name", "username", "email", "phone", "img"],
       },
     ],
+    order: [["id", "DESC"]],
   });
   let finalData = [];
   if (data.length) {
@@ -60,7 +57,6 @@ const getAll = async (req, res) => {
     });
     finalData = cekPermission.filter((i) => i !== undefined);
   }
-
   res.send(finalData);
 };
 

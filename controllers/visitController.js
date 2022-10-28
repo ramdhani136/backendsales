@@ -13,6 +13,7 @@ var IO = require("../app");
 const fs = require("fs");
 const cekData = require("../utils/cenData");
 const { List } = require("whatsapp-web.js");
+const { notif } = require("../models");
 
 const Visits = db.visits;
 
@@ -221,6 +222,20 @@ const create = async (req, res) => {
         order: [["id", "DESC"]],
       });
       IO.setEmit("visits", await newVisitById(visits.id, req.userId, "visit"));
+
+      const setNotif = await notif.create({
+        id_user: req.userId,
+        action: "post",
+        doc: "visit",
+        page: "visit",
+        id_params: visits.id,
+        remark: "",
+        status: 0,
+      });
+
+      if (setNotif) {
+        IO.setEmit("notif", true);
+      }
 
       res.status(200).json({
         status: true,
@@ -434,6 +449,20 @@ const updateVisit = async (req, res) => {
               }
             });
           IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
+
+          const setNotif = await notif.create({
+            id_user: req.userId,
+            action: "put",
+            doc: "visit",
+            page: "visit",
+            id_params: id,
+            remark: "",
+            status: 0,
+          });
+
+          if (setNotif) {
+            IO.setEmit("notif", true);
+          }
           res.status(200).json({
             status: true,
             message: "successfully save data",
@@ -516,6 +545,19 @@ const updateVisit = async (req, res) => {
         //           }
         //         }
         IO.setEmit("visits", await newVisitById(id, req.userId, "visit"));
+        const setNotif = await notif.create({
+          id_user: req.userId,
+          action: "put",
+          doc: "visit",
+          page: "visit",
+          id_params: id,
+          remark: "",
+          status: 0,
+        });
+
+        if (setNotif) {
+          IO.setEmit("notif", true);
+        }
         res.status(200).json({
           status: true,
           message: "successfully update data",
@@ -570,7 +612,19 @@ const deleteVisit = async (req, res) => {
         console.log("file tidak ditemukan");
       }
       IO.setEmit("deleteVisit", id);
+      const setNotif = await notif.create({
+        id_user: req.userId,
+        action: "delete",
+        doc: "visit",
+        page: "visit",
+        id_params: id,
+        remark: "",
+        status: 0,
+      });
 
+      if (setNotif) {
+        IO.setEmit("notif", true);
+      }
       res.status(200).json({
         status: true,
         message: "successfully delete data",
@@ -715,5 +769,5 @@ module.exports = {
   getByStatus,
   getByName,
   getByUser,
-  newVisit
+  newVisit,
 };
