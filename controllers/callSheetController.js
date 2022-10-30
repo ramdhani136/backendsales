@@ -76,7 +76,7 @@ const newCallSheet = async (userId, type) => {
     finalWhere = isWhere;
   }
   return await CallSheet.findAll({
-    // where: finalWhere,
+    where: finalWhere,
     include: [
       {
         model: db.users,
