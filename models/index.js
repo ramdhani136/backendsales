@@ -145,6 +145,16 @@ db.roleprofiles.hasMany(db.rolelists, {
   as: "rolelist",
 });
 
+db.roleprofiles.belongsTo(db.users, {
+  foreignKey: "id_user",
+  as: "user",
+});
+
+db.roleprofiles.belongsTo(db.branch, {
+  foreignKey: "id_branch",
+  as: "branch",
+});
+
 //Role User
 db.roleusers.belongsTo(db.roleprofiles, {
   foreignKey: "id_roleprofile",
@@ -171,17 +181,6 @@ db.rolelists.belongsTo(db.users, {
 db.rolelists.belongsTo(db.roleprofiles, {
   foreignKey: "id_role",
   as: "role",
-});
-
-//Role profile
-db.roleprofiles.belongsTo(db.users, {
-  foreignKey: "id_user",
-  as: "user",
-});
-
-db.roleprofiles.belongsTo(db.branch, {
-  foreignKey: "id_branch",
-  as: "branch",
 });
 
 // permission

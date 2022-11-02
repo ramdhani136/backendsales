@@ -80,7 +80,7 @@ const getAllProfile = async (req, res) => {
     where: finalWhere,
     order: [["name", "ASC"]],
     // DIUBAH NANTI DI CEK
-    // include: [
+    include: [
     //   {
     //     model: db.rolelists,
     //     as: "rolelist",
@@ -100,9 +100,9 @@ const getAllProfile = async (req, res) => {
     //       "export",
     //     ],
     //   },
-    //   { model: db.users, as: "user", attributes: ["id", "name"] },
-    //   { model: db.branch, as: "branch", attributes: ["id", "name"] },
-    // ],
+      { model: db.users, as: "user", attributes: ["id", "name"] },
+      { model: db.branch, as: "branch", attributes: ["id", "name"] },
+    ],
   });
   IO.setEmit("roleprofiles", await newProfile(req.userId, "roleprofile"));
   res.send(roleprofile);
