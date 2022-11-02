@@ -1,5 +1,6 @@
 const db = require("../models");
 var IO = require("../app");
+const { permissionUser } = require("../middleware/getPermission");
 const IsData = db.permission;
 
 const newData = async () => {
@@ -44,7 +45,15 @@ const create = async (req, res) => {
 };
 
 const getAllData = async (req, res) => {
+  const isUser = await permissionUser(req.userId, "permission");
+  const isWhere = [isUser.length > 0 && { id_user: isUser }];
+
+  let finalWhere = [];
+  if (isUser.length > 0) {
+    finalWhere = isWhere;
+  }
   let data = await IsData.findAll({
+    where: finalWhere,
     order: [["allow", "ASC"]],
     include: [
       { model: db.users, as: "user", attributes: ["id", "name"] },
@@ -69,8 +78,16 @@ const getByUser = async (req, res) => {
 
 const getOneData = async (req, res) => {
   let id = req.params.id;
+  const isUser = await permissionUser(req.userId, "permission");
+  const isWhere = [isUser.length > 0 && { id_user: isUser }, { id: id }];
+
+  let finalWhere = [{ id: id }];
+  if (isUser.length > 0) {
+    finalWhere = isWhere;
+  }
+
   let data = await IsData.findAll({
-    where: { id: id },
+    where: finalWhere,
     include: [
       { model: db.users, as: "user", attributes: ["id", "name"] },
       { model: db.users, as: "created", attributes: ["id", "name"] },
@@ -81,8 +98,15 @@ const getOneData = async (req, res) => {
 
 const updateData = async (req, res) => {
   let id = req.params.id;
+  const isUser = await permissionUser(req.userId, "permission");
+  const isWhere = [isUser.length > 0 && { id_user: isUser }, { id: id }];
+
+  let finalWhere = [{ id: id }];
+  if (isUser.length > 0) {
+    finalWhere = isWhere;
+  }
   try {
-    const data = await IsData.update(req.body, { where: { id: id } });
+    const data = await IsData.update(req.body, { where: finalWhere });
     if (data > 0) {
       IO.setEmit("permission", await newData());
       res.status(200).json({
@@ -100,8 +124,15 @@ const updateData = async (req, res) => {
 
 const deleteData = async (req, res) => {
   let id = req.params.id;
+  const isUser = await permissionUser(req.userId, "permission");
+  const isWhere = [isUser.length > 0 && { id_user: isUser }, { id: id }];
+
+  let finalWhere = [{ id: id }];
+  if (isUser.length > 0) {
+    finalWhere = isWhere;
+  }
   try {
-    const data = await IsData.destroy({ where: { id: id } });
+    const data = await IsData.destroy({ where: finalWhere });
     if (data > 0) {
       IO.setEmit("permission", await newData());
       res.status(200).json({
