@@ -37,7 +37,7 @@ app.use("/images/users", express.static(path.join(__dirname, "public/users")));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({limit: '50mb', extended: true}));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // app.use(fileUpload());
 
 const setEmit = (name, msg) => {
@@ -57,6 +57,7 @@ const port = process.env.PORT || 5000;
 
 // Import WaBot
 WaBot();
+
 // End
 
 const deviceRouter = require("./routes/deviceRoute");
@@ -73,7 +74,6 @@ const permissionRoute = require("./routes/permissionRoute");
 const contactRoute = require("./routes/contactRoute");
 const notifRoute = require("./routes/notifRoute");
 var myModul = require("./utils/waBot");
-const { contact } = require("./models");
 
 app.get("/coba", async (req, res) => {
   const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
@@ -109,8 +109,14 @@ dari skala (tidak baik) 1-5 (sangat baik)
     },
   ];
   let list = new List(message, "Rate", sections, "VST2022082222152", "footer");
-  await myModul.kirimpesan("08881118187@c.us", list);
+  await myModul.kirimpesan("089637428874@c.us", list);
   res.send("hjahja");
+});
+app.use("/qr", async (req, res) => {
+  const client = myModul.allClient;
+  await client[0].destroy();
+  client[0].initialize();
+  res.send("req status qr");
 });
 app.use("/device", verifyToken, PermissionData, deviceRouter);
 app.use("/branch", verifyToken, PermissionData, branchRouter);
@@ -119,7 +125,7 @@ app.use("/customergroup", verifyToken, PermissionData, cgRouter);
 app.use("/customer", verifyToken, PermissionData, customerRoute);
 // app.use("/visit", visitRoute);
 app.use("/visit", verifyToken, PermissionData, visitRoute);
-app.use("/contact", verifyToken,PermissionData, contactRoute);
+app.use("/contact", verifyToken, PermissionData, contactRoute);
 app.use("/callsheet", verifyToken, PermissionData, callSheetRoute);
 app.use("/roleprofile", verifyToken, PermissionData, profileRoleRoute);
 app.use("/rolelist", verifyToken, PermissionData, roleListRoute);
