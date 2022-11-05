@@ -40,7 +40,7 @@ const newVisitById = async (id, userId, type) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "img", "name", "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -89,7 +89,7 @@ const newVisit = async (userId, type) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "img", "name", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -196,7 +196,7 @@ const create = async (req, res) => {
           {
             model: db.users,
             as: "user",
-            attributes: ["id", "name", "username", "email", "phone"],
+            attributes: ["id", "name", "img", "username", "email", "phone"],
           },
           {
             model: db.branch,
@@ -277,7 +277,7 @@ const getAllVisit = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "name", "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -330,7 +330,7 @@ const getByStatus = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "name", "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -378,7 +378,7 @@ const getOneVisit = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "name", "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -670,7 +670,7 @@ const getByName = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "name", , "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
@@ -724,7 +724,7 @@ const getByUser = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", "username", "email", "phone"],
+        attributes: ["id", "name", "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
