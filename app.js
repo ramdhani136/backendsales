@@ -139,3 +139,5 @@ app.get("*", function (req, res) {
 server.listen(port, () => {
   console.log(`Listening port : ${port}`);
 });
+
+module.exports = { io };
