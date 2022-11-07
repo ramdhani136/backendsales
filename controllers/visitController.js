@@ -670,7 +670,7 @@ const getByName = async (req, res) => {
       {
         model: db.users,
         as: "user",
-        attributes: ["id", "name", , "img", "username", "email", "phone"],
+        attributes: ["id", "name",  "img", "username", "email", "phone"],
       },
       {
         model: db.branch,
