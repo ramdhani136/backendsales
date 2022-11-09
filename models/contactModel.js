@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       index: true,
     },
-    id_branch: {
-      type: DataTypes.INTEGER,
-      index: true,
-    },
     id_user: {
       type: DataTypes.INTEGER,
       index: true,

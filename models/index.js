@@ -102,10 +102,7 @@ db.contact.belongsTo(db.users, {
   as: "user",
 });
 
-db.contact.belongsTo(db.branch, {
-  foreignKey: "id_branch",
-  as: "branch",
-});
+
 
 db.contact.belongsTo(db.customers, {
   foreignKey: "id_customer",

@@ -1,6 +1,5 @@
 const db = require("../models");
 const {
-  permissionBranch,
   permissionCG,
   permissionCustomer,
   permissionUser,
@@ -10,20 +9,18 @@ var IO = require("../app");
 const Contact = db.contact;
 
 const newContactById = async (id, userId, type) => {
-  const isBranch = await permissionBranch(userId, type);
   const isCG = await permissionCG(userId, type);
   const isCustomer = await permissionCustomer(userId, type);
   const isUser = await permissionUser(userId, type);
   const isWhere = [
     { id: id },
-    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
     isCustomer.length > 0 && {
       id_customer: { [Op.or]: [isCustomer, 1000000] },
     },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [{ id: id }];
-  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+  if (isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
   return await Contact.findOne({
@@ -35,11 +32,6 @@ const newContactById = async (id, userId, type) => {
         attributes: ["id", "name", "username", "email", "phone"],
       },
       {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
-      },
-      {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "id_customerGroup", "status"],
@@ -50,7 +42,12 @@ const newContactById = async (id, userId, type) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -60,19 +57,17 @@ const newContactById = async (id, userId, type) => {
 };
 
 const newContact = async (userId, type) => {
-  const isBranch = await permissionBranch(userId, type);
   const isCG = await permissionCG(userId, type);
   const isCustomer = await permissionCustomer(userId, type);
   const isUser = await permissionUser(userId, type);
   const isWhere = [
-    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
     isCustomer.length > 0 && {
       id_customer: { [Op.or]: [isCustomer, 1000000] },
     },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [];
-  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+  if (isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
   return await Contact.findAll({
@@ -84,11 +79,6 @@ const newContact = async (userId, type) => {
         attributes: ["id", "name", "username", "email", "phone"],
       },
       {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
-      },
-      {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type", "id_customerGroup", "status"],
@@ -99,7 +89,12 @@ const newContact = async (userId, type) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -115,7 +110,6 @@ const create = async (req, res) => {
     email: req.body.email,
     deskripsi: req.body.deskripsi,
     id_customer: req.body.id_customer,
-    id_branch: req.body.id_branch,
     id_user: req.body.id_user,
     status: req.body.status,
   };
@@ -123,7 +117,10 @@ const create = async (req, res) => {
   try {
     const contact = await Contact.create(data);
 
-    IO.setEmit("contact", await newContactById(contact.id, req.userId, "contact"));
+    IO.setEmit(
+      "contact",
+      await newContactById(contact.id, req.userId, "contact")
+    );
     res.status(200).json({
       status: true,
       message: "successfully save data",
@@ -138,19 +135,17 @@ const create = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  const isBranch = await permissionBranch(req.userId, "contact");
   const isCG = await permissionCG(req.userId, "contact");
   const isCustomer = await permissionCustomer(req.userId, "contact");
   const isUser = await permissionUser(req.userId, "contact");
   const isWhere = [
-    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
     isCustomer.length > 0 && {
       id_customer: { [Op.or]: [isCustomer, 1000000] },
     },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [];
-  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+  if (isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
   let contact = await Contact.findAll({
@@ -160,11 +155,6 @@ const getAll = async (req, res) => {
         model: db.users,
         as: "user",
         attributes: ["id", "name", "username", "email", "phone"],
-      },
-      {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
       },
       {
         model: db.customers,
@@ -177,7 +167,12 @@ const getAll = async (req, res) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -186,25 +181,22 @@ const getAll = async (req, res) => {
   });
 
   res.send(contact);
-
 };
 
 const getByStatus = async (req, res) => {
   let status = req.params.status;
-  const isBranch = await permissionBranch(req.userId, "contact");
   const isCG = await permissionCG(req.userId, "contact");
   const isCustomer = await permissionCustomer(req.userId, "contact");
   const isUser = await permissionUser(req.userId, "contact");
   const isWhere = [
     { status: status },
-    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
     isCustomer.length > 0 && {
       id_customer: { [Op.or]: [isCustomer, 1000000] },
     },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [{ status: status }];
-  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+  if (isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
   let contact = await Contact.findAll({
@@ -215,11 +207,7 @@ const getByStatus = async (req, res) => {
         as: "user",
         attributes: ["id", "name", "username", "email", "phone"],
       },
-      {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
-      },
+
       {
         model: db.customers,
         as: "customer",
@@ -231,7 +219,12 @@ const getByStatus = async (req, res) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -243,7 +236,6 @@ const getByStatus = async (req, res) => {
 };
 
 const getOne = async (req, res) => {
-  const isBranch = await permissionBranch(req.userId, "contact");
   const isCG = await permissionCG(req.userId, "contact");
   const isCustomer = await permissionCustomer(req.userId, "contact");
   const isUser = await permissionUser(req.userId, "contact");
@@ -251,7 +243,6 @@ const getOne = async (req, res) => {
   let contact = await Contact.findOne({
     where: [
       { id: id },
-      isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
       isCustomer.length > 0 && {
         id_customer: { [Op.or]: [isCustomer, 1000000] },
       },
@@ -264,11 +255,6 @@ const getOne = async (req, res) => {
         attributes: ["id", "name", "username", "email", "phone"],
       },
       {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
-      },
-      {
         model: db.customers,
         as: "customer",
         attributes: ["id", "name", "type"],
@@ -279,7 +265,12 @@ const getOne = async (req, res) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -356,23 +347,20 @@ const deleteData = async (req, res) => {
   }
 };
 
-
 const getByCustomer = async (req, res) => {
   let id = req.params.id;
-  const isBranch = await permissionBranch(req.userId, "contact");
   const isCG = await permissionCG(req.userId, "contact");
   const isCustomer = await permissionCustomer(req.userId, "contact");
   const isUser = await permissionUser(req.userId, "contact");
   const isWhere = [
     { id_customer: id },
-    isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
     isCustomer.length > 0 && {
       id_customer: { [Op.or]: [isCustomer, 1000000] },
     },
     isUser.length > 0 && { id_user: isUser },
   ];
   let finalWhere = [{ id_customer: id }];
-  if (isBranch.length > 0 || isUser.length > 0 || isCustomer.length > 0) {
+  if (isUser.length > 0 || isCustomer.length > 0) {
     finalWhere = isWhere;
   }
   let contact = await Contact.findAll({
@@ -382,11 +370,6 @@ const getByCustomer = async (req, res) => {
         model: db.users,
         as: "user",
         attributes: ["id", "name", "username", "email", "phone"],
-      },
-      {
-        model: db.branch,
-        as: "branch",
-        attributes: ["id", "name"],
       },
       {
         model: db.customers,
@@ -399,7 +382,12 @@ const getByCustomer = async (req, res) => {
           {
             model: db.customergroup,
             as: "customergroup",
-            attributes: ["id", "name", "deskripsi", "status"],
+            attributes: ["id", "name"],
+          },
+          {
+            model: db.branch,
+            as: "branch",
+            attributes: ["id", "name"],
           },
         ],
       },
@@ -410,8 +398,6 @@ const getByCustomer = async (req, res) => {
   res.send(contact);
 };
 
-
-
 module.exports = {
   create,
   getAll,
@@ -419,5 +405,5 @@ module.exports = {
   update,
   deleteData,
   getByStatus,
-  getByCustomer
+  getByCustomer,
 };

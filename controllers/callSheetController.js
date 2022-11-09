@@ -11,9 +11,6 @@ const { Op } = require("sequelize");
 const { List } = require("whatsapp-web.js");
 const CallSheet = db.callsheets;
 
-//  isCG.length > 0 && { id_customergroup: { [Op.or]: [isCG, 1000000] } },
-//     isBranch.length > 0 && { id_branch: { [Op.or]: [isBranch, 1000000] } },
-//     isCustomer.length > 0 && { id: { [Op.or]: [isCustomer, 1000000] } },
 
 const newCallSheetById = async (id, userId, type) => {
   const isBranch = await permissionBranch(userId, type);
