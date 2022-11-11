@@ -75,43 +75,43 @@ const contactRoute = require("./routes/contactRoute");
 const notifRoute = require("./routes/notifRoute");
 var myModul = require("./utils/waBot");
 
-app.get("/coba", async (req, res) => {
-  const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
-Mohon berikan rating dari Bapak/Ibu tentang komunikasi
-yang sudah dilakukan oleh tim sales kami.
-dari skala (tidak baik) 1-5 (sangat baik)
-`;
-  let sections = [
-    {
-      title: "Silahkan berikan penilaian :)",
-      rows: [
-        {
-          title: "#CST00120220900131_1",
-          description: "⭐",
-        },
-        {
-          title: "#CST00120220900131_2",
-          description: "⭐⭐",
-        },
-        {
-          title: "#CST00120220900131_3",
-          description: "⭐⭐⭐",
-        },
-        {
-          title: "#CST00120220900131_4",
-          description: "⭐⭐⭐⭐",
-        },
-        {
-          title: "#CST00120220900131_5",
-          description: "⭐⭐⭐⭐⭐",
-        },
-      ],
-    },
-  ];
-  let list = new List(message, "Rate", sections, "VST2022082222152", "footer");
-  await myModul.kirimpesan("089637428874@c.us", list);
-  res.send("hjahja");
-});
+// app.get("/coba", async (req, res) => {
+//   const message = `Halo perkenalkan saya Vika (bot system) dari Pt. Ekatunggal 🙏
+// Mohon berikan rating dari Bapak/Ibu tentang komunikasi
+// yang sudah dilakukan oleh tim sales kami.
+// dari skala (tidak baik) 1-5 (sangat baik)
+// `;
+//   let sections = [
+//     {
+//       title: "Silahkan berikan penilaian :)",
+//       rows: [
+//         {
+//           title: "#CST00120220900131_1",
+//           description: "⭐",
+//         },
+//         {
+//           title: "#CST00120220900131_2",
+//           description: "⭐⭐",
+//         },
+//         {
+//           title: "#CST00120220900131_3",
+//           description: "⭐⭐⭐",
+//         },
+//         {
+//           title: "#CST00120220900131_4",
+//           description: "⭐⭐⭐⭐",
+//         },
+//         {
+//           title: "#CST00120220900131_5",
+//           description: "⭐⭐⭐⭐⭐",
+//         },
+//       ],
+//     },
+//   ];
+//   let list = new List(message, "Rate", sections, "VST2022082222152", "footer");
+//   await myModul.kirimpesan("089637428874@c.us", list);
+//   res.send("hjahja");
+// });
 app.use("/qr", async (req, res) => {
   const client = myModul.allClient;
   await client[0].destroy();
